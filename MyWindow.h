@@ -45,6 +45,7 @@ public:
 	// void showDirection(bool flag, Eigen::Vector3d begin, Eigen::Vector3d dir);
 
 protected:
+	bool PD_flag;
 	SkeletonPtr	mFloor;
 	SkeletonPtr mHubo;
 	SkeletonPtr mBall;

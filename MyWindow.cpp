@@ -2,6 +2,7 @@
 
 MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 {
+	PD_flag = true;
 	this->setWorld(world);
 	this->initParameters();
 	this->initWindowSetting();
@@ -86,7 +87,7 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 	{
 		//Implement Here 
 		case 'q':
-		std::cout << "test" << std::endl;
+		PD_flag = !PD_flag;
 		break;
 		default:
 		SimWindow::keyboard(key, x, y);
@@ -96,8 +97,11 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 
 void MyWindow::timeStepping()
 {
-	mController->clearForces();
-	mController->addSPDForces();
+	if(PD_flag)
+	{
+		mController->clearForces();
+		mController->addSPDForces();
+	}
 	SimWindow::timeStepping();
 	// mController->setFreeJointPosition();
 }
