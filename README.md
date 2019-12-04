@@ -14,6 +14,9 @@ make -j*
 
 ./run
 
+### Package requirement
+
+In ubuntu: libdart6-all-dev
 
 ### User Interface
 Press ' ' to Start simulation
