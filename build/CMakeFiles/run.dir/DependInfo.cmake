@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/sonic/Projects/Animation Project/Controller.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/Controller.cpp.o"
   "/home/sonic/Projects/Animation Project/MyWindow.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/MyWindow.cpp.o"
+  "/home/sonic/Projects/Animation Project/SkelGen.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/SkelGen.cpp.o"
   "/home/sonic/Projects/Animation Project/main.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/main.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

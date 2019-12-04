@@ -16,14 +16,14 @@ void Controller::jointControlSetter()
     mKp = Eigen::MatrixXd::Identity(nDofs, nDofs);
     mKd = Eigen::MatrixXd::Identity(nDofs, nDofs);
 
-    // for(std::size_t i = 0; i < 6; ++i){
-    //     mKp(i,i) = 0;
-    //     mKd(i,i) = 0;
-    // }
     for(std::size_t i = 0; i < nDofs; ++i){
         mKp(i,i) = mag_Kp;
         mKd(i,i) = 2 * std::sqrt(mag_Kp);
     }
+    // for(std::size_t i = 0; i < 6; ++i){
+    //     mKp(i,i) = 0;
+    //     mKd(i,i) = 0;
+    // }
     this->setTargetPosition(mHubo->getPositions());
 }
 

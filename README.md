@@ -20,3 +20,5 @@ Press ' ' to Start simulation
 
 Press 'q' to On/Off the PD-control
 
+Press 'r' to Throw a ball to human
+

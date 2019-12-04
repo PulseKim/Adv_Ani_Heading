@@ -5,9 +5,9 @@
 #include <unistd.h>
 #define GetCurrentDir getcwd
 #include "Controller.h"
+#include "SkelGen.h"
 // #include "IkSolver.h"
-// #include "Contact.h"
-// #include "Grasp.h"
+
 
 using namespace dart::simulation;
 using namespace dart::gui::glut;
@@ -28,6 +28,8 @@ public:
 	void addSkeleton();
 	std::string GetCurrentWorkingDir(); 
 
+
+	void throw_ball();
 
 	// //Overriding functions
 	void keyboard(unsigned char key, int x, int y) override;
@@ -50,7 +52,6 @@ protected:
 	SkeletonPtr mHubo;
 	SkeletonPtr mBall;
 	std::unique_ptr<Controller> mController;
-	// std::unique_ptr<IkSolver> mIKsolver;
 
 public:
 	double rad_obj;

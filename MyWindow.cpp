@@ -6,6 +6,7 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 	this->setWorld(world);
 	this->initParameters();
 	this->initWindowSetting();
+
 }
 
 
@@ -53,24 +54,31 @@ void MyWindow::initWindowSetting()
 void MyWindow::initSkeleton()
 {
 	this->loadHuboFloor();
+	mBall = Skeleton::create("ball");
+	float ball_rad = 0.11;
+	SkelGen skel;
+	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
 }
 
 void MyWindow::setSkeleton()
 {
 	Eigen::VectorXd default_pose = mHubo->getPositions();
-	default_pose[4] = 0.9;
+	default_pose[4] = 0.88;
 	mHubo->setPositions(default_pose);
+	mBall->setPosition(3, 0.3);
+	mBall->setPosition(4, 1.2);
 
 	// Visual Aspect
 	auto visualShapenodes = mFloor->getBodyNode(0)->getShapeNodesWith<VisualAspect>();
 	// std::cout << visualShapenodes[0]->getVisualAspect()->getColor() << std::endl;s
-	// visualShapenodes[0]->getVisualAspect()->setColor(dart::Color::Red(1.0));
+	visualShapenodes[0]->getVisualAspect()->setColor(dart::Color::White(0.50));
 }
 
 void MyWindow::addSkeleton()
 {
 	mWorld->addSkeleton(mHubo);
 	mWorld->addSkeleton(mFloor);
+	mWorld->addSkeleton(mBall);
 }
 
 std::string MyWindow::GetCurrentWorkingDir() 
@@ -81,6 +89,23 @@ std::string MyWindow::GetCurrentWorkingDir()
   return current_working_dir;
 }
 
+void MyWindow::throw_ball()
+{
+	SkeletonPtr gen_ball = Skeleton::create("ball_temp");
+	float ball_rad = 0.11;
+	SkelGen skel;
+	skel.freeSphere(gen_ball, "ball_temp", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
+	gen_ball->setPosition(4, 1.5);
+	gen_ball->setPosition(5, 1.0);
+	mWorld->addSkeleton(gen_ball);
+	gen_ball->setVelocity(5, -15.0);
+	// BodyNode* bn = gen_ball -> getBodyNode(0);
+	// float default_force = 12.0;
+	// bn->addExtForce(-default_force * Eigen::Vector3d::UnitZ(),
+ //                        bn->getCOM(), false, false);
+
+}
+
 void MyWindow::keyboard(unsigned char key, int x, int y)
 {
 	switch(key)
@@ -88,6 +113,9 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 		//Implement Here 
 		case 'q':
 		PD_flag = !PD_flag;
+		break;
+		case 'r':
+		this -> throw_ball();
 		break;
 		default:
 		SimWindow::keyboard(key, x, y);

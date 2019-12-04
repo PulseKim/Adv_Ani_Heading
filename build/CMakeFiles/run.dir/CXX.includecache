@@ -37,6 +37,24 @@ unistd.h
 -
 Controller.h
 /home/sonic/Projects/Animation Project/Controller.h
+SkelGen.h
+/home/sonic/Projects/Animation Project/SkelGen.h
+
+/home/sonic/Projects/Animation Project/SkelGen.cpp
+iostream
+-
+SkelGen.h
+/home/sonic/Projects/Animation Project/SkelGen.h
+
+/home/sonic/Projects/Animation Project/SkelGen.h
+iostream
+-
+dart/dart.hpp
+/home/sonic/Projects/Animation Project/dart/dart.hpp
+dart/gui/gui.hpp
+/home/sonic/Projects/Animation Project/dart/gui/gui.hpp
+dart/utils/utils.hpp
+/home/sonic/Projects/Animation Project/dart/utils/utils.hpp
 
 /home/sonic/Projects/Animation Project/main.cpp
 dart/simulation/simulation.hpp

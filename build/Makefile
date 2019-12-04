@@ -177,6 +177,33 @@ MyWindow.cpp.s:
 	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/MyWindow.cpp.s
 .PHONY : MyWindow.cpp.s
 
+SkelGen.o: SkelGen.cpp.o
+
+.PHONY : SkelGen.o
+
+# target to build an object file
+SkelGen.cpp.o:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/SkelGen.cpp.o
+.PHONY : SkelGen.cpp.o
+
+SkelGen.i: SkelGen.cpp.i
+
+.PHONY : SkelGen.i
+
+# target to preprocess a source file
+SkelGen.cpp.i:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/SkelGen.cpp.i
+.PHONY : SkelGen.cpp.i
+
+SkelGen.s: SkelGen.cpp.s
+
+.PHONY : SkelGen.s
+
+# target to generate assembly for a file
+SkelGen.cpp.s:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/SkelGen.cpp.s
+.PHONY : SkelGen.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -219,6 +246,9 @@ help:
 	@echo "... MyWindow.o"
 	@echo "... MyWindow.i"
 	@echo "... MyWindow.s"
+	@echo "... SkelGen.o"
+	@echo "... SkelGen.i"
+	@echo "... SkelGen.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
