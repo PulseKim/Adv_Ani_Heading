@@ -1,0 +1,592 @@
+<?xml version="1.0" ?>
+<skel version="1.0">
+	<world name="world">
+		<physics>
+            <time_step>0.001</time_step>
+            <gravity>0 -9.81 0</gravity>
+            <collision_detector>bullet</collision_detector>
+        </physics>
+		<skeleton name="ground skeleton">
+            <mobile>false</mobile>
+            <body name="ground">
+                <transformation>0 0.0 0 0 0 0</transformation>
+                <visualization_shape>
+                    <transformation>0 0 0 0 0 0</transformation>
+                    <geometry>
+                        <box>
+                            <size>10.0 0.05 10.0</size>
+                        </box>
+                    </geometry>
+                    <color>0.7 0.7 0.7 1.0 </color>
+                </visualization_shape>
+                <collision_shape>
+                    <transformation>0 0 0 0 0 0</transformation>
+                    <geometry>
+                        <box>
+                            <size>100.0 0.05 100.0</size>
+                        </box>
+                    </geometry>
+                </collision_shape>                                
+            </body>
+            <joint type="weld" name="joint 1">
+                <parent>world</parent>
+                <child>ground</child>
+            </joint>
+        </skeleton>	
+
+		<skeleton name="hubo">
+			<transformation>0 0 0 0 0 0</transformation>
+			<body name="torso">
+				<transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.2 0.2 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.2 0.2 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="femurr">
+				<transformation>-0.114 -0.21 0.0 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.41 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.41 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="femurl">
+				<transformation>0.114 -0.21 0.0 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.41 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.41 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="tibiar">
+				<transformation>-0.114 -0.61995 0.0 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.38 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.38 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="tibial">
+				<transformation>0.114 -0.61995 0.0 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.38 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.38 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="footr">
+				<transformation>-0.114 -0.8196 0.0588 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.1</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.1</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="footl">
+				<transformation>0.114 -0.8196 0.0588 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.1</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.1</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="toer">
+				<transformation>-0.114 -0.8196 0.138 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.04</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.04</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="toel">
+				<transformation>0.114 -0.8196 0.138 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.04</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.04</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="shoulder">
+				<transformation>0.0 0.312 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.38 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.38 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="rclavicle">
+				<transformation>-0.087 0.5359 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.16 0.05 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.16 0.05 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="lclavicle">
+				<transformation>0.0869 0.5359 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.16 0.05 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.16 0.05 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="upperarml">
+				<transformation>0.1738 0.4229 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.26 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.26 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="upperarmr">
+				<transformation>-0.174 0.4229 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.26 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.26 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="forearml">
+				<transformation>0.1738 0.1504 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.25 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.25 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="forearmr">
+				<transformation>-0.174 0.1504 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.25 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.25 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="handl">
+				<transformation>0.1738 -0.01 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="handr">
+				<transformation>-0.174 -0.01 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.05</size>
+						</box>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<box>
+							<size>0.05 0.05 0.05</size>
+						</box>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<body name="head">
+				<transformation>0.0 0.6 -0.05 0.0 0.0 0.0</transformation>
+				<inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
+				<visualization_shape>
+					<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+					<geometry>
+						<sphere>
+							<radius>0.07</radius>
+						</sphere>
+					</geometry>
+				</visualization_shape>
+				<collision_shape>
+					<transformation>0 0 0 0 0 0</transformation>
+					<geometry>
+						<sphere>
+							<radius>0.07</radius>
+						</sphere>
+					</geometry>
+					<collidable>1</collidable>
+				</collision_shape>
+			</body>
+			<joint type="free" name="torso">
+				<transformation>0.0 0.0 0.0 0.0 -0.0 0.0</transformation>
+				<parent>world</parent>
+				<child>torso</child>
+			</joint>
+			<joint type="ball" name="femurl">
+				<transformation>0.00046 0.21 0.0 0.0 -0.0 0.0</transformation>
+				<parent>torso</parent>
+				<child>femurl</child>
+			</joint>
+			<joint type="ball" name="femurr">
+				<transformation>0.0 0.21 0.0 0.0 -0.0 0.0</transformation>
+				<parent>torso</parent>
+				<child>femurr</child>
+			</joint>
+			<joint type="ball" name="tibiar">
+				<transformation>0.0 0.199646 0.0 0.0 -0.0 0.0</transformation>
+				<parent>femurr</parent>
+				<child>tibiar</child>
+			</joint>
+			<joint type="ball" name="footr">
+				<transformation>0.0 0.0 -0.0588 0.0 -0.0 0.0</transformation>
+				<parent>tibiar</parent>
+				<child>footr</child>
+			</joint>
+			<joint type="ball" name="tibial">
+				<transformation>0.0 0.199646 0.0 0.0 -0.0 0.0</transformation>
+				<parent>femurl</parent>
+				<child>tibial</child>
+			</joint>
+			<joint type="ball" name="footl">
+				<transformation>0.0 0.0 -0.0588 0.0 -0.0 0.0</transformation>
+				<parent>tibial</parent>
+				<child>footl</child>
+			</joint>
+			<joint type="ball" name="toer">
+				<transformation>0.0 0.0 -0.020242 0.0 -0.0 0.0</transformation>
+				<parent>footr</parent>
+				<child>toer</child>
+			</joint>
+			<joint type="ball" name="toel">
+				<transformation>0.0 0.0 -0.020242 0.0 -0.0 0.0</transformation>
+				<parent>footl</parent>
+				<child>toel</child>
+			</joint>
+			<joint type="ball" name="shoulder">
+				<transformation>0.0 -0.199444 0.0 0.0 -0.0 0.0</transformation>
+				<parent>torso</parent>
+				<child>shoulder</child>
+			</joint>
+			<joint type="ball" name="head">
+				<transformation>0.0 -0.049451 0.0 0.0 -0.0 0.0</transformation>
+				<parent>shoulder</parent>
+				<child>head</child>
+			</joint>
+			<joint type="ball" name="lclavicle">
+				<transformation>-0.0869 -0.0246 0.0 0.0 -0.0 0.0</transformation>
+				<parent>shoulder</parent>
+				<child>lclavicle</child>
+			</joint>
+			<joint type="ball" name="rclavicle">
+				<transformation>0.087 -0.0246 0.0 0.0 -0.0 0.0</transformation>
+				<parent>shoulder</parent>
+				<child>rclavicle</child>
+			</joint>
+			<joint type="ball" name="upperarml">
+				<transformation>5.99999999998e-06 0.1377 0.0 0.0 -0.0 0.0</transformation>
+				<parent>lclavicle</parent>
+				<child>upperarml</child>
+			</joint>
+			<joint type="ball" name="upperarmr">
+				<transformation>0.0 0.1377 0.0 0.0 -0.0 0.0</transformation>
+				<parent>rclavicle</parent>
+				<child>upperarmr</child>
+			</joint>
+			<joint type="ball" name="forearml">
+				<transformation>5.99999999998e-06 0.1346 0.0 0.0 -0.0 0.0</transformation>
+				<parent>upperarml</parent>
+				<child>forearml</child>
+			</joint>
+			<joint type="ball" name="forearmr">
+				<transformation>0.0 0.1346 0.0 0.0 -0.0 0.0</transformation>
+				<parent>upperarmr</parent>
+				<child>forearmr</child>
+			</joint>
+			<joint type="ball" name="handl">
+				<transformation>5.99999999998e-06 0.034 0.0 0.0 -0.0 0.0</transformation>
+				<parent>forearml</parent>
+				<child>handl</child>
+			</joint>
+			<joint type="ball" name="handr">
+				<transformation>0.0 0.034 0.0 0.0 -0.0 0.0</transformation>
+				<parent>forearmr</parent>
+				<child>handr</child>
+			</joint>
+		</skeleton>
+	</world>
+</skel>

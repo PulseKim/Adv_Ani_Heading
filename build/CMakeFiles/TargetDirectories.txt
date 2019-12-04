@@ -1,0 +1,3 @@
+/home/sonic/Projects/Animation Project/build/CMakeFiles/rebuild_cache.dir
+/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir
+/home/sonic/Projects/Animation Project/build/CMakeFiles/edit_cache.dir
