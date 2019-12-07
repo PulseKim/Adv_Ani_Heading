@@ -1,3 +1,6 @@
+#ifndef _MYWINDOW_H_
+#define _MYWINDOW_H_
+
 #include <iostream>
 #include "dart/dart.hpp"
 #include "dart/gui/gui.hpp"
@@ -6,6 +9,7 @@
 #define GetCurrentDir getcwd
 #include "Controller.h"
 #include "SkelGen.h"
+#include "bvh.h"
 // #include "IkSolver.h"
 
 
@@ -47,13 +51,16 @@ public:
 	// void showDirection(bool flag, Eigen::Vector3d begin, Eigen::Vector3d dir);
 
 protected:
+	bool bvh_flag;
 	bool PD_flag;
 	SkeletonPtr	mFloor;
 	SkeletonPtr mHubo;
 	SkeletonPtr mBall;
 	std::unique_ptr<Controller> mController;
-
+	std::vector<Eigen::VectorXd> mMotions;
+	std::unique_ptr<bvh> mbvh;
 public:
-	double rad_obj;
-	double height_obj;
+	int cnt;
 };
+
+#endif

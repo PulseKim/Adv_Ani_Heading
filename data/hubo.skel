@@ -9,7 +9,11 @@
 		<skeleton name="ground skeleton">
             <mobile>false</mobile>
             <body name="ground">
-                <transformation>0 0.0 0 0 0 0</transformation>
+                <transformation>0 0 0 0 0 0</transformation>
+                <inertia>
+					<mass>1.0</mass>
+					<offset>0 0 0</offset>
+				</inertia>
                 <visualization_shape>
                     <transformation>0 0 0 0 0 0</transformation>
                     <geometry>
@@ -23,7 +27,7 @@
                     <transformation>0 0 0 0 0 0</transformation>
                     <geometry>
                         <box>
-                            <size>100.0 0.05 100.0</size>
+                            <size>1000.0 0.05 1000.0</size>
                         </box>
                     </geometry>
                 </collision_shape>                                
@@ -204,7 +208,7 @@
 					<collidable>1</collidable>
 				</collision_shape>
 			</body>
-			<body name="toer">
+			<body name="toesr">
 				<transformation>-0.114 -0.8196 0.138 0.0 0.0 0.0</transformation>
 				<inertia>
 					<mass>1.0</mass>
@@ -228,7 +232,7 @@
 					<collidable>1</collidable>
 				</collision_shape>
 			</body>
-			<body name="toel">
+			<body name="toesl">
 				<transformation>0.114 -0.8196 0.138 0.0 0.0 0.0</transformation>
 				<inertia>
 					<mass>1.0</mass>
@@ -527,15 +531,15 @@
 				<parent>tibial</parent>
 				<child>footl</child>
 			</joint>
-			<joint type="ball" name="toer">
+			<joint type="ball" name="toesr">
 				<transformation>0.0 0.0 -0.020242 0.0 -0.0 0.0</transformation>
 				<parent>footr</parent>
-				<child>toer</child>
+				<child>toesr</child>
 			</joint>
-			<joint type="ball" name="toel">
+			<joint type="ball" name="toesl">
 				<transformation>0.0 0.0 -0.020242 0.0 -0.0 0.0</transformation>
 				<parent>footl</parent>
-				<child>toel</child>
+				<child>toesl</child>
 			</joint>
 			<joint type="ball" name="shoulder">
 				<transformation>0.0 -0.199444 0.0 0.0 -0.0 0.0</transformation>

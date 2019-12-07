@@ -3,9 +3,12 @@
 MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 {
 	PD_flag = true;
+	bvh_flag = false;
 	this->setWorld(world);
 	this->initParameters();
 	this->initWindowSetting();
+	std::string file_name = "16_01_jump.bvh";
+	mbvh = std::make_unique<bvh>(file_name, mHubo);
 
 }
 
@@ -13,8 +16,7 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 void MyWindow::initParameters()
 {
 	mWorld->setGravity(Eigen::Vector3d(0, -9.81, 0));
-	rad_obj = 0.04;
-	height_obj = 0.15;
+	cnt =0;
 }
 
 
@@ -63,7 +65,7 @@ void MyWindow::initSkeleton()
 void MyWindow::setSkeleton()
 {
 	Eigen::VectorXd default_pose = mHubo->getPositions();
-	default_pose[4] = 0.88;
+	default_pose[4] = 0.87;
 	mHubo->setPositions(default_pose);
 	mBall->setPosition(3, 0.3);
 	mBall->setPosition(4, 1.2);
@@ -91,10 +93,12 @@ std::string MyWindow::GetCurrentWorkingDir()
 
 void MyWindow::throw_ball()
 {
-	SkeletonPtr gen_ball = Skeleton::create("ball_temp");
+	SkeletonPtr original_skel = mWorld->getSkeleton("ball");
+	mWorld->removeSkeleton(original_skel);
+	SkeletonPtr gen_ball = Skeleton::create("ball");
 	float ball_rad = 0.11;
 	SkelGen skel;
-	skel.freeSphere(gen_ball, "ball_temp", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
+	skel.freeSphere(gen_ball, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
 	gen_ball->setPosition(4, 1.5);
 	gen_ball->setPosition(5, 1.0);
 	mWorld->addSkeleton(gen_ball);
@@ -117,6 +121,13 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 		case 'r':
 		this -> throw_ball();
 		break;
+		case 't':
+		bvh_flag = true;
+		mMotions = mbvh->motionGetter();
+		// PD_flag = false;
+		mWorld->setTimeStep(mbvh->timeGetter());
+		break;
+
 		default:
 		SimWindow::keyboard(key, x, y);
 	}	
@@ -125,13 +136,29 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 
 void MyWindow::timeStepping()
 {
+	if(bvh_flag)
+	{
+		// mController->setTargetPosition(mMotions[cnt]);
+		auto current = mMotions[cnt];
+		mHubo->setPositions(current);
+		cnt++;
+		if(cnt == mMotions.size()){
+			cnt = 0;
+			bvh_flag = false;
+			PD_flag = true;
+			mController->setFreeJointPosition();
+		}
+	}
+
 	if(PD_flag)
 	{
 		mController->clearForces();
 		mController->addSPDForces();
+
 	}
+	
 	SimWindow::timeStepping();
-	// mController->setFreeJointPosition();
+	
 }
 
 void MyWindow::draw()

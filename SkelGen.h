@@ -1,3 +1,5 @@
+#ifndef _SKELGEN_H_
+#define _SKELGEN_H_
 #include <iostream>
 #include "dart/dart.hpp"
 #include "dart/gui/gui.hpp"
@@ -40,3 +42,4 @@ public:
 
 
 };
+#endif

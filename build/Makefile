@@ -204,6 +204,33 @@ SkelGen.cpp.s:
 	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/SkelGen.cpp.s
 .PHONY : SkelGen.cpp.s
 
+bvh.o: bvh.cpp.o
+
+.PHONY : bvh.o
+
+# target to build an object file
+bvh.cpp.o:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/bvh.cpp.o
+.PHONY : bvh.cpp.o
+
+bvh.i: bvh.cpp.i
+
+.PHONY : bvh.i
+
+# target to preprocess a source file
+bvh.cpp.i:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/bvh.cpp.i
+.PHONY : bvh.cpp.i
+
+bvh.s: bvh.cpp.s
+
+.PHONY : bvh.s
+
+# target to generate assembly for a file
+bvh.cpp.s:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/bvh.cpp.s
+.PHONY : bvh.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -249,6 +276,9 @@ help:
 	@echo "... SkelGen.o"
 	@echo "... SkelGen.i"
 	@echo "... SkelGen.s"
+	@echo "... bvh.o"
+	@echo "... bvh.i"
+	@echo "... bvh.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

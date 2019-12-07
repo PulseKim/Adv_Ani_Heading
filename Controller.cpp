@@ -46,15 +46,21 @@ void Controller::addSPDForces()
 {
 	Eigen::VectorXd q = mHubo->getPositions();
     Eigen::VectorXd dq = mHubo->getVelocities();
-    for(int i = 0; i < q.size(); ++i){
-        if(q[i]-mTargetPositions[i] > M_PI){
-            q[i]-=2*M_PI;
-            dq[i]-=2*M_PI;
+    int cnt = 1;
+    while(cnt !=0){
+        cnt = 0;
+        for(int i = 0; i < q.size(); ++i){
+            if(q[i]-mTargetPositions[i] > M_PI){
+                q[i]-=2*M_PI;
+                dq[i]-=2*M_PI;
+                cnt =1;
+            }
+            else if(q[i]-mTargetPositions[i] < -M_PI){
+                q[i]+=2*M_PI;
+                dq[i]+=2*M_PI;
+                cnt =1;
+            } 
         }
-        else if(q[i]-mTargetPositions[i] < -M_PI){
-            q[i]+=2*M_PI;
-            dq[i]+=2*M_PI;
-        } 
     }
 
     Eigen::MatrixXd invM = (mHubo->getMassMatrix()

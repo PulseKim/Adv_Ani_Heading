@@ -39,6 +39,8 @@ Controller.h
 /home/sonic/Projects/Animation Project/Controller.h
 SkelGen.h
 /home/sonic/Projects/Animation Project/SkelGen.h
+bvh.h
+/home/sonic/Projects/Animation Project/bvh.h
 
 /home/sonic/Projects/Animation Project/SkelGen.cpp
 iostream
@@ -55,6 +57,26 @@ dart/gui/gui.hpp
 /home/sonic/Projects/Animation Project/dart/gui/gui.hpp
 dart/utils/utils.hpp
 /home/sonic/Projects/Animation Project/dart/utils/utils.hpp
+
+/home/sonic/Projects/Animation Project/bvh.cpp
+bvh.h
+/home/sonic/Projects/Animation Project/bvh.h
+unistd.h
+-
+stdlib.h
+-
+
+/home/sonic/Projects/Animation Project/bvh.h
+dart/dart.hpp
+/home/sonic/Projects/Animation Project/dart/dart.hpp
+iostream
+-
+vector
+-
+string
+-
+fstream
+-
 
 /home/sonic/Projects/Animation Project/main.cpp
 dart/simulation/simulation.hpp
