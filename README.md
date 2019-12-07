@@ -25,3 +25,4 @@ Press 'q' to On/Off the PD-control
 
 Press 'r' to Throw a ball to human
 
+Press 't' to see Jump motion
