@@ -8,7 +8,7 @@ SET(CMAKE_BUILD_TYPE Release CACHE STRING
 #	FORCE
 	)
 
-find_package(DART 6.6.0 REQUIRED COMPONENTS gui optimizer-ipopt collision-bullet collision-ode CONFIG)
+find_package(DART REQUIRED COMPONENTS gui optimizer-ipopt collision-bullet collision-ode CONFIG)
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 

@@ -5,11 +5,13 @@
 #include "dart/dart.hpp"
 #include "dart/gui/gui.hpp"
 #include "dart/utils/utils.hpp"
+#include <dart/collision/bullet/BulletCollisionDetector.hpp>
 #include <unistd.h>
 #define GetCurrentDir getcwd
 #include "Controller.h"
 #include "SkelGen.h"
 #include "bvh.h"
+#include "MotionBlender.h"
 // #include "IkSolver.h"
 
 
@@ -31,7 +33,7 @@ public:
 	void setSkeleton();
 	void addSkeleton();
 	std::string GetCurrentWorkingDir(); 
-
+	void motionblend_init();
 
 	void throw_ball();
 
@@ -59,8 +61,11 @@ protected:
 	std::unique_ptr<Controller> mController;
 	std::vector<Eigen::VectorXd> mMotions;
 	std::unique_ptr<bvh> mbvh;
+	std::unique_ptr<MotionBlender> mCurrentMotionblender;
 public:
 	int cnt;
+	int motion_count;
+	int motion_peak;
 };
 
 #endif

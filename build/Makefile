@@ -150,6 +150,33 @@ Controller.cpp.s:
 	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/Controller.cpp.s
 .PHONY : Controller.cpp.s
 
+MotionBlender.o: MotionBlender.cpp.o
+
+.PHONY : MotionBlender.o
+
+# target to build an object file
+MotionBlender.cpp.o:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/MotionBlender.cpp.o
+.PHONY : MotionBlender.cpp.o
+
+MotionBlender.i: MotionBlender.cpp.i
+
+.PHONY : MotionBlender.i
+
+# target to preprocess a source file
+MotionBlender.cpp.i:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/MotionBlender.cpp.i
+.PHONY : MotionBlender.cpp.i
+
+MotionBlender.s: MotionBlender.cpp.s
+
+.PHONY : MotionBlender.s
+
+# target to generate assembly for a file
+MotionBlender.cpp.s:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/MotionBlender.cpp.s
+.PHONY : MotionBlender.cpp.s
+
 MyWindow.o: MyWindow.cpp.o
 
 .PHONY : MyWindow.o
@@ -270,6 +297,9 @@ help:
 	@echo "... Controller.o"
 	@echo "... Controller.i"
 	@echo "... Controller.s"
+	@echo "... MotionBlender.o"
+	@echo "... MotionBlender.i"
+	@echo "... MotionBlender.s"
 	@echo "... MyWindow.o"
 	@echo "... MyWindow.i"
 	@echo "... MyWindow.s"

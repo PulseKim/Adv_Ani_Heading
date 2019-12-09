@@ -81,9 +81,33 @@ CMakeFiles/run.dir/Controller.cpp.o.provides: CMakeFiles/run.dir/Controller.cpp.
 CMakeFiles/run.dir/Controller.cpp.o.provides.build: CMakeFiles/run.dir/Controller.cpp.o
 
 
+CMakeFiles/run.dir/MotionBlender.cpp.o: CMakeFiles/run.dir/flags.make
+CMakeFiles/run.dir/MotionBlender.cpp.o: ../MotionBlender.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/run.dir/MotionBlender.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/run.dir/MotionBlender.cpp.o -c "/home/sonic/Projects/Animation Project/MotionBlender.cpp"
+
+CMakeFiles/run.dir/MotionBlender.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/run.dir/MotionBlender.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "/home/sonic/Projects/Animation Project/MotionBlender.cpp" > CMakeFiles/run.dir/MotionBlender.cpp.i
+
+CMakeFiles/run.dir/MotionBlender.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/run.dir/MotionBlender.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S "/home/sonic/Projects/Animation Project/MotionBlender.cpp" -o CMakeFiles/run.dir/MotionBlender.cpp.s
+
+CMakeFiles/run.dir/MotionBlender.cpp.o.requires:
+
+.PHONY : CMakeFiles/run.dir/MotionBlender.cpp.o.requires
+
+CMakeFiles/run.dir/MotionBlender.cpp.o.provides: CMakeFiles/run.dir/MotionBlender.cpp.o.requires
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/MotionBlender.cpp.o.provides.build
+.PHONY : CMakeFiles/run.dir/MotionBlender.cpp.o.provides
+
+CMakeFiles/run.dir/MotionBlender.cpp.o.provides.build: CMakeFiles/run.dir/MotionBlender.cpp.o
+
+
 CMakeFiles/run.dir/MyWindow.cpp.o: CMakeFiles/run.dir/flags.make
 CMakeFiles/run.dir/MyWindow.cpp.o: ../MyWindow.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/run.dir/MyWindow.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/run.dir/MyWindow.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/run.dir/MyWindow.cpp.o -c "/home/sonic/Projects/Animation Project/MyWindow.cpp"
 
 CMakeFiles/run.dir/MyWindow.cpp.i: cmake_force
@@ -107,7 +131,7 @@ CMakeFiles/run.dir/MyWindow.cpp.o.provides.build: CMakeFiles/run.dir/MyWindow.cp
 
 CMakeFiles/run.dir/SkelGen.cpp.o: CMakeFiles/run.dir/flags.make
 CMakeFiles/run.dir/SkelGen.cpp.o: ../SkelGen.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/run.dir/SkelGen.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/run.dir/SkelGen.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/run.dir/SkelGen.cpp.o -c "/home/sonic/Projects/Animation Project/SkelGen.cpp"
 
 CMakeFiles/run.dir/SkelGen.cpp.i: cmake_force
@@ -131,7 +155,7 @@ CMakeFiles/run.dir/SkelGen.cpp.o.provides.build: CMakeFiles/run.dir/SkelGen.cpp.
 
 CMakeFiles/run.dir/bvh.cpp.o: CMakeFiles/run.dir/flags.make
 CMakeFiles/run.dir/bvh.cpp.o: ../bvh.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/run.dir/bvh.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/run.dir/bvh.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/run.dir/bvh.cpp.o -c "/home/sonic/Projects/Animation Project/bvh.cpp"
 
 CMakeFiles/run.dir/bvh.cpp.i: cmake_force
@@ -155,7 +179,7 @@ CMakeFiles/run.dir/bvh.cpp.o.provides.build: CMakeFiles/run.dir/bvh.cpp.o
 
 CMakeFiles/run.dir/main.cpp.o: CMakeFiles/run.dir/flags.make
 CMakeFiles/run.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/run.dir/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/run.dir/main.cpp.o"
 	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/run.dir/main.cpp.o -c "/home/sonic/Projects/Animation Project/main.cpp"
 
 CMakeFiles/run.dir/main.cpp.i: cmake_force
@@ -180,6 +204,7 @@ CMakeFiles/run.dir/main.cpp.o.provides.build: CMakeFiles/run.dir/main.cpp.o
 # Object files for target run
 run_OBJECTS = \
 "CMakeFiles/run.dir/Controller.cpp.o" \
+"CMakeFiles/run.dir/MotionBlender.cpp.o" \
 "CMakeFiles/run.dir/MyWindow.cpp.o" \
 "CMakeFiles/run.dir/SkelGen.cpp.o" \
 "CMakeFiles/run.dir/bvh.cpp.o" \
@@ -189,6 +214,7 @@ run_OBJECTS = \
 run_EXTERNAL_OBJECTS =
 
 run: CMakeFiles/run.dir/Controller.cpp.o
+run: CMakeFiles/run.dir/MotionBlender.cpp.o
 run: CMakeFiles/run.dir/MyWindow.cpp.o
 run: CMakeFiles/run.dir/SkelGen.cpp.o
 run: CMakeFiles/run.dir/bvh.cpp.o
@@ -224,7 +250,7 @@ run: /usr/lib/liboctomath.so
 run: /usr/local/lib/libboost_regex.so
 run: /usr/lib/x86_64-linux-gnu/libode.so
 run: CMakeFiles/run.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable run"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="/home/sonic/Projects/Animation Project/build/CMakeFiles" --progress-num=$(CMAKE_PROGRESS_7) "Linking CXX executable run"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/run.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -233,6 +259,7 @@ CMakeFiles/run.dir/build: run
 .PHONY : CMakeFiles/run.dir/build
 
 CMakeFiles/run.dir/requires: CMakeFiles/run.dir/Controller.cpp.o.requires
+CMakeFiles/run.dir/requires: CMakeFiles/run.dir/MotionBlender.cpp.o.requires
 CMakeFiles/run.dir/requires: CMakeFiles/run.dir/MyWindow.cpp.o.requires
 CMakeFiles/run.dir/requires: CMakeFiles/run.dir/SkelGen.cpp.o.requires
 CMakeFiles/run.dir/requires: CMakeFiles/run.dir/bvh.cpp.o.requires

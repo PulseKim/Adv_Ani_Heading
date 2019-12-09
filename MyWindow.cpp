@@ -8,7 +8,7 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 	this->initParameters();
 	this->initWindowSetting();
 	std::string file_name = "16_01_jump.bvh";
-	mbvh = std::make_unique<bvh>(file_name, mHubo);
+	mbvh = std::make_unique<bvh>(file_name, mHubo, mWorld->getTimeStep());
 
 }
 
@@ -17,6 +17,7 @@ void MyWindow::initParameters()
 {
 	mWorld->setGravity(Eigen::Vector3d(0, -9.81, 0));
 	cnt =0;
+	this->motion_count = 0;
 }
 
 
@@ -42,10 +43,13 @@ void MyWindow::loadHuboFloor()
 
 void MyWindow::initWindowSetting()
 {	 
+	mWorld->getConstraintSolver()->setCollisionDetector(
+    	  dart::collision::BulletCollisionDetector::create());
+
 	if (dart::collision::CollisionDetector::getFactory()->canCreate("bullet"))
   	{
     	mWorld->getConstraintSolver()->setCollisionDetector(
-    	  dart::collision::CollisionDetector::getFactory()->create("bullet"));
+    	  dart::collision::BulletCollisionDetector::create());
   	}
 	this->initSkeleton();
 	this->setSkeleton();
@@ -110,6 +114,11 @@ void MyWindow::throw_ball()
 
 }
 
+void MyWindow::motionblend_init()
+{
+	mCurrentMotionblender = std::make_unique<MotionBlender>(mHubo->getPositions(), mMotions[0]);
+}
+
 void MyWindow::keyboard(unsigned char key, int x, int y)
 {
 	switch(key)
@@ -123,9 +132,8 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 		break;
 		case 't':
 		bvh_flag = true;
-		mMotions = mbvh->motionGetter();
-		// PD_flag = false;
-		mWorld->setTimeStep(mbvh->timeGetter());
+		mMotions = mbvh->expMotionGetter();
+		this -> motionblend_init();
 		break;
 
 		default:
@@ -138,27 +146,24 @@ void MyWindow::timeStepping()
 {
 	if(bvh_flag)
 	{
-		// mController->setTargetPosition(mMotions[cnt]);
-		auto current = mMotions[cnt];
-		mHubo->setPositions(current);
+		Eigen::VectorXd blend_current = mCurrentMotionblender->root_aligned_pose(mMotions[cnt]);
+		mController->setTargetPosition(blend_current);
+
 		cnt++;
+
 		if(cnt == mMotions.size()){
 			cnt = 0;
 			bvh_flag = false;
 			PD_flag = true;
-			mController->setFreeJointPosition();
 		}
 	}
-
 	if(PD_flag)
 	{
 		mController->clearForces();
 		mController->addSPDForces();
-
 	}
-	
 	SimWindow::timeStepping();
-	
+
 }
 
 void MyWindow::draw()
@@ -271,26 +276,6 @@ void MyWindow::draw()
 // 		glVertex3f(trans[0] + current_axis[0], trans[1] + current_axis[1], trans[2] + current_axis[2]);
 // 		glEnd();
 // 	}
-// }
-
-// //Depricated Currently
-// void MyWindow::showDirection(bool flag, Eigen::Vector3d begin, Eigen::Vector3d dir)
-// {
-// 	if(!flag) return;
-// 	dir.normalize();
-// 	dir = 0.03 * dir;
-// 	glColor3f(0.0, 1.0, 1.0); 
-// 	glLineWidth(4.0);
-// 	glBegin(GL_LINES);
-// 	glVertex3f(begin[0], begin[1], begin[2]);
-// 	glVertex3f(begin[0] + dir[0], begin[1] + dir[1], begin[2] + dir[2]);
-// 	glEnd();
-// 	mRI->setPenColor(Eigen::Vector3d(0.0, 1.0, 1.0));
-// 	mRI->pushMatrix();
-// 	glTranslated(begin[0], begin[1], begin[2]);
-// 	mRI->drawSphere(0.005);
-// 	mRI->popMatrix();
-
 // }
 
 

@@ -28,7 +28,7 @@ Eigen::Isometry3d getSE3ByTransV(Eigen::Vector3d trans)
     return iso;
 }
 
-bvh::bvh(string &filename, SkeletonPtr &biped)
+bvh::bvh(string &filename, SkeletonPtr &biped, float sim_time)
 {
 	float scale = 0.01;
 	string current = GetCurrentWorkingDir();
@@ -41,12 +41,6 @@ bvh::bvh(string &filename, SkeletonPtr &biped)
 	vector<Eigen::Isometry3d> trans_stack;
 	trans_stack.push_back(Eigen::Isometry3d::Identity());
 	int total_dofs = 0;
-
-	for(int i =0; i < dofs.size();++i)
-	{	
-		cout << dofs[i]->getName() << endl;
-		// cout << biped->getPositions()[i] << endl;
-	}
 
 	if(!motionFile){
 		cout << "Expected valid file name" << endl;
@@ -98,7 +92,6 @@ bvh::bvh(string &filename, SkeletonPtr &biped)
             float dt;
         	motionFile >> dt;
             time_step = dt;
-            cout << dt << endl;            
         	for(int i = 0 ; i < num_frame; ++i )
         	{
         		vector<float> one_frame;
@@ -199,6 +192,49 @@ bvh::bvh(string &filename, SkeletonPtr &biped)
         }
     }
     motionFile.close();
+    this-> interpolate_cnt = time_step/ sim_time;
+    this->linear_motion_gen();
+}
+
+void bvh::linear_motion_gen()
+{
+
+    for(int i =0; i < mMotion.size() - 1; ++i)
+    {
+        Eigen::VectorXd currentFrame = mMotion[i];
+        Eigen::VectorXd nextFrame = mMotion[i+1];
+        mLinearExpandMotion.push_back(currentFrame);
+        for(int k = 0; k < this->interpolate_cnt ; ++k){
+            float t = float(k)/float(interpolate_cnt);
+            Eigen::VectorXd inter_frame = Eigen::VectorXd::Zero(currentFrame.size());
+            for(int j = 0; j < currentFrame.size(); j+=3)
+            {
+                if(j == 3)
+                {
+                    // Implement Position Linear interpolation
+                    for(int p = 0; p < 3; ++p)
+                    {
+                        float int_loc = (nextFrame[j+p] - currentFrame[j+p]) * t + currentFrame[j+p];
+                        inter_frame[j+p] = int_loc;
+                    }
+                }
+                else{
+                    Eigen::Vector3d current_axis = Eigen::Vector3d(currentFrame[j],currentFrame[j+1],currentFrame[j+2]);
+                    Eigen::Vector3d next_axis = Eigen::Vector3d(nextFrame[j],nextFrame[j+1],nextFrame[j+2]);
+                    Eigen::Quaterniond current_quat = expToQuat(current_axis);
+                    Eigen::Quaterniond next_quat = expToQuat(next_axis);                    
+                    Eigen::Quaterniond int_quat = current_quat.slerp(t, next_quat);
+                    Eigen::Vector3d int_axis = quatToExp(int_quat);
+                    inter_frame[j] = int_axis[0];
+                    inter_frame[j+1] = int_axis[1];
+                    inter_frame[j+2] = int_axis[2];
+                    // cout << int_quat.w() << int_quat.x() << int_quat.y() << int_quat.z() <<endl;
+                }
+            }
+            mLinearExpandMotion.push_back(inter_frame);
+        }
+    }
+    mLinearExpandMotion.push_back(mMotion[mMotion.size()-1]);
 }
 
 float bvh::timeGetter()
@@ -208,4 +244,8 @@ float bvh::timeGetter()
 vector<Eigen::VectorXd> bvh::motionGetter()
 {
     return mMotion;
+}
+vector<Eigen::VectorXd> bvh::expMotionGetter()
+{
+    return mLinearExpandMotion;
 }
