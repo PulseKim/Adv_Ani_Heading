@@ -177,6 +177,33 @@ MotionBlender.cpp.s:
 	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/MotionBlender.cpp.s
 .PHONY : MotionBlender.cpp.s
 
+MotionGraph.o: MotionGraph.cpp.o
+
+.PHONY : MotionGraph.o
+
+# target to build an object file
+MotionGraph.cpp.o:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/MotionGraph.cpp.o
+.PHONY : MotionGraph.cpp.o
+
+MotionGraph.i: MotionGraph.cpp.i
+
+.PHONY : MotionGraph.i
+
+# target to preprocess a source file
+MotionGraph.cpp.i:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/MotionGraph.cpp.i
+.PHONY : MotionGraph.cpp.i
+
+MotionGraph.s: MotionGraph.cpp.s
+
+.PHONY : MotionGraph.s
+
+# target to generate assembly for a file
+MotionGraph.cpp.s:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/MotionGraph.cpp.s
+.PHONY : MotionGraph.cpp.s
+
 MyWindow.o: MyWindow.cpp.o
 
 .PHONY : MyWindow.o
@@ -300,6 +327,9 @@ help:
 	@echo "... MotionBlender.o"
 	@echo "... MotionBlender.i"
 	@echo "... MotionBlender.s"
+	@echo "... MotionGraph.o"
+	@echo "... MotionGraph.i"
+	@echo "... MotionGraph.s"
 	@echo "... MyWindow.o"
 	@echo "... MyWindow.i"
 	@echo "... MyWindow.s"

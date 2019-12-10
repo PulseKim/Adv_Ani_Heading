@@ -10,8 +10,7 @@
 #define GetCurrentDir getcwd
 #include "Controller.h"
 #include "SkelGen.h"
-#include "bvh.h"
-#include "MotionBlender.h"
+#include "MotionGraph.h"
 // #include "IkSolver.h"
 
 

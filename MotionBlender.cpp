@@ -24,17 +24,20 @@ void MotionBlender::align_parameter()
 
 Eigen::VectorXd MotionBlender::root_aligned_pose(Eigen::VectorXd input_pose)
 {
+	Eigen::Vector3d root_rot = Eigen::Vector3d(mCurrentPose[0],mCurrentPose[1],mCurrentPose[2]);
+	Eigen::Quaterniond r_current = expToQuat(root_rot);
 	Eigen::Quaterniond ori_rot = expToQuat(Eigen::Vector3d(input_pose[0],input_pose[1],input_pose[2]));
 	Eigen::Quaterniond u_quaternion;
 	u_quaternion.w() = 0 ;
 	u_quaternion.vec() = this->pose_diff;
-	Eigen::Quaterniond alignment_pose =  ori_rot * u_quaternion * ori_rot.inverse();
+	Eigen::Quaterniond alignment_pose =  r_current * u_quaternion * r_current.inverse();
 	Eigen::Quaterniond alignment_rot = ori_rot * this->rot_diff;
 	Eigen::Vector3d aligned_rot = quatToExp(alignment_rot);
 	input_pose[0] = aligned_rot[0];
 	input_pose[1] = aligned_rot[1];
 	input_pose[2] = aligned_rot[2];
 	input_pose[3] += alignment_pose.x();
+	// input_pose[4] += alignment_pose.y();
 	input_pose[5] += alignment_pose.z();
 	return input_pose;
 }

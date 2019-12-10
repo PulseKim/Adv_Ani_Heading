@@ -12,7 +12,7 @@ public:
 	MotionBlender(Eigen::VectorXd current_pose, Eigen::VectorXd next_pose);
 	void align_parameter();
 	Eigen::VectorXd root_aligned_pose(Eigen::VectorXd input_pose);
-
+	
 
 private:
 	Eigen::VectorXd mCurrentPose;

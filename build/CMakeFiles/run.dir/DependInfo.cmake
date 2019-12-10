@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/sonic/Projects/Animation Project/Controller.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/Controller.cpp.o"
   "/home/sonic/Projects/Animation Project/MotionBlender.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/MotionBlender.cpp.o"
+  "/home/sonic/Projects/Animation Project/MotionGraph.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/MotionGraph.cpp.o"
   "/home/sonic/Projects/Animation Project/MyWindow.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/MyWindow.cpp.o"
   "/home/sonic/Projects/Animation Project/SkelGen.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/SkelGen.cpp.o"
   "/home/sonic/Projects/Animation Project/bvh.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/bvh.cpp.o"

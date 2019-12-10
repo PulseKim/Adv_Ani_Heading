@@ -8,8 +8,10 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 	this->initParameters();
 	this->initWindowSetting();
 	std::string file_name = "16_01_jump.bvh";
+	// std::string file_name = "16_34_slow walk, stop.bvh";
+	// std::string file_name = "16_46_run&jog.bvh";
 	mbvh = std::make_unique<bvh>(file_name, mHubo, mWorld->getTimeStep());
-
+	std::unique_ptr<MotionGraph> temp = std::make_unique<MotionGraph>(mHubo, mWorld->getTimeStep());
 }
 
 
@@ -63,13 +65,13 @@ void MyWindow::initSkeleton()
 	mBall = Skeleton::create("ball");
 	float ball_rad = 0.11;
 	SkelGen skel;
-	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
+	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Blue());
 }
 
 void MyWindow::setSkeleton()
 {
 	Eigen::VectorXd default_pose = mHubo->getPositions();
-	default_pose[4] = 0.87;
+	default_pose[4] = 0.82;
 	mHubo->setPositions(default_pose);
 	mBall->setPosition(3, 0.3);
 	mBall->setPosition(4, 1.2);
@@ -102,7 +104,7 @@ void MyWindow::throw_ball()
 	SkeletonPtr gen_ball = Skeleton::create("ball");
 	float ball_rad = 0.11;
 	SkelGen skel;
-	skel.freeSphere(gen_ball, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
+	skel.freeSphere(gen_ball, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Blue());
 	gen_ball->setPosition(4, 1.5);
 	gen_ball->setPosition(5, 1.0);
 	mWorld->addSkeleton(gen_ball);
@@ -148,9 +150,7 @@ void MyWindow::timeStepping()
 	{
 		Eigen::VectorXd blend_current = mCurrentMotionblender->root_aligned_pose(mMotions[cnt]);
 		mController->setTargetPosition(blend_current);
-
 		cnt++;
-
 		if(cnt == mMotions.size()){
 			cnt = 0;
 			bvh_flag = false;

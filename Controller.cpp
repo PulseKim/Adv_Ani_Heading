@@ -20,7 +20,7 @@ void Controller::jointControlSetter()
         mKp(i,i) = mag_Kp;
         mKd(i,i) = 2 * std::sqrt(mag_Kp);
     }
-    mag_Kp = 2000;
+    mag_Kp = 1500;
     for(std::size_t i = 3; i < 6; ++i){
         mKp(i,i) = mag_Kp;
         mKd(i,i) = 2 * std::sqrt(mag_Kp);
@@ -58,13 +58,12 @@ void Controller::addSPDForces()
                Eigen::Vector3d target_axis = Eigen::Vector3d(mTargetPositions[i],mTargetPositions[i+1],mTargetPositions[i+2] );
                float angle_dev = current_axis.norm() - target_axis.norm();
                if(angle_dev > M_PI){
-                    q[i]-=2*M_PI;
-                    dq[i]-=2*M_PI;
+                    current_axis -= 2*M_PI / 3 * Eigen::Vector3d(1,1,1);
+                    // dq[i]-=2*M_PI;
                     cnt =1;
                 }
                 else if(angle_dev-mTargetPositions[i] < -M_PI){
-                    q[i]+=2*M_PI;
-                    dq[i]+=2*M_PI;
+                    current_axis += 2*M_PI / 3 * Eigen::Vector3d(1,1,1);
                     cnt =1;
                 } 
             }
