@@ -75,7 +75,7 @@ void MyWindow::setSkeleton()
 	default_pose[4] = 0.82;
 	mHubo->setPositions(default_pose);
 	mBall->setPosition(3, 0.6);
-	mBall->setPosition(4, 0.1);
+	mBall->setPosition(4, 1.2);
 
 	// Visual Aspect
 	auto visualShapenodes = mFloor->getBodyNode(0)->getShapeNodesWith<VisualAspect>();
@@ -85,6 +85,7 @@ void MyWindow::setSkeleton()
 
 void MyWindow::addSkeleton()
 {
+	mFloor->getBodyNode(0)->setFrictionCoeff(0.5);
 	mWorld->addSkeleton(mHubo);
 	mWorld->addSkeleton(mFloor);
 	mWorld->addSkeleton(mBall);
@@ -110,6 +111,7 @@ void MyWindow::throw_normal_ball()
 	mBall->setPosition(5, 8.0);
 	mWorld->addSkeleton(mBall);
 	mBall->setVelocity(5, -15.0);
+	// mBall->setAcceleration(5, 2.0);
 	this->water_flag = false;
 }
 void MyWindow::throw_water_ball()
@@ -124,6 +126,7 @@ void MyWindow::throw_water_ball()
 	mBall->setPosition(5, 8.0);
 	mWorld->addSkeleton(mBall);
 	mBall->setVelocity(5, -15.0);
+	// mBall->setAcceleration(5, 2.0);
 	this->water_flag = true;
 }
 
@@ -134,9 +137,9 @@ bool MyWindow::ballHeadCollision()
 	auto head_collision = collisionEngine->createCollisionGroup();
 	shoulder_collision->addShapeFramesOf(mHubo->getBodyNode("rclavicle"));
 	shoulder_collision->addShapeFramesOf(mHubo->getBodyNode("lclavicle"));
-	shoulder_collision->addShapeFramesOf(mBall->getBodyNode(0));
+	shoulder_collision->addShapeFramesOf(mBall.get());
 	head_collision->addShapeFramesOf(mHubo->getBodyNode("head"));
-	head_collision->addShapeFramesOf(mBall->getBodyNode(0));
+	head_collision->addShapeFramesOf(mBall.get());
 	bool collision = head_collision->collide() || shoulder_collision->collide();
 
 	return collision;
@@ -196,6 +199,11 @@ void MyWindow::timeStepping()
 		if(water_flag)
 		{
 			mController->setRootZero();
+		}
+		else
+		{
+			mBall->setVelocity(4,2);
+			mBall->setVelocity(5,1.5);
 		}
 	}
 

@@ -9,7 +9,7 @@
 		<skeleton name="ground skeleton">
             <mobile>false</mobile>
             <body name="ground">
-                <transformation>0 -0.12 0 0 0 0</transformation>
+                <transformation>0 -0.12 45 0 0 0</transformation>
                 <inertia>
 					<mass>1.0</mass>
 					<offset>0 0 0</offset>
@@ -18,7 +18,7 @@
                     <transformation>0 0 0 0 0 0</transformation>
                     <geometry>
                         <box>
-                            <size>10.0 0.05 10.0</size>
+                            <size>10.0 0.05 100.0</size>
                         </box>
                     </geometry>
                     <color>0.7 0.7 0.7 1.0 </color>
@@ -27,7 +27,7 @@
                     <transformation>0 0 0 0 0 0</transformation>
                     <geometry>
                         <box>
-                            <size>100.0 0.05 100.0</size>
+                            <size>10.0 0.05 100.0</size>
                         </box>
                     </geometry>
                 </collision_shape>                                
