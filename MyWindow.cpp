@@ -11,7 +11,7 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 	// std::string file_name = "16_34_slow walk, stop.bvh";
 	// std::string file_name = "16_46_run&jog.bvh";
 	mbvh = std::make_unique<bvh>(file_name, mHubo, mWorld->getTimeStep());
-	std::unique_ptr<MotionGraph> temp = std::make_unique<MotionGraph>(mHubo, mWorld->getTimeStep());
+	
 }
 
 
@@ -53,6 +53,7 @@ void MyWindow::initWindowSetting()
     	mWorld->getConstraintSolver()->setCollisionDetector(
     	  dart::collision::BulletCollisionDetector::create());
   	}
+
 	this->initSkeleton();
 	this->setSkeleton();
 	this->addSkeleton();
@@ -73,8 +74,8 @@ void MyWindow::setSkeleton()
 	Eigen::VectorXd default_pose = mHubo->getPositions();
 	default_pose[4] = 0.82;
 	mHubo->setPositions(default_pose);
-	mBall->setPosition(3, 0.3);
-	mBall->setPosition(4, 1.2);
+	mBall->setPosition(3, 0.6);
+	mBall->setPosition(4, 0.1);
 
 	// Visual Aspect
 	auto visualShapenodes = mFloor->getBodyNode(0)->getShapeNodesWith<VisualAspect>();
@@ -97,23 +98,48 @@ std::string MyWindow::GetCurrentWorkingDir()
   return current_working_dir;
 }
 
-void MyWindow::throw_ball()
+void MyWindow::throw_normal_ball()
 {
 	SkeletonPtr original_skel = mWorld->getSkeleton("ball");
 	mWorld->removeSkeleton(original_skel);
-	SkeletonPtr gen_ball = Skeleton::create("ball");
+	mBall = Skeleton::create("ball");
 	float ball_rad = 0.11;
 	SkelGen skel;
-	skel.freeSphere(gen_ball, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Blue());
-	gen_ball->setPosition(4, 1.5);
-	gen_ball->setPosition(5, 1.0);
-	mWorld->addSkeleton(gen_ball);
-	gen_ball->setVelocity(5, -15.0);
-	// BodyNode* bn = gen_ball -> getBodyNode(0);
-	// float default_force = 12.0;
-	// bn->addExtForce(-default_force * Eigen::Vector3d::UnitZ(),
- //                        bn->getCOM(), false, false);
+	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
+	mBall->setPosition(4, 1.8);
+	mBall->setPosition(5, 8.0);
+	mWorld->addSkeleton(mBall);
+	mBall->setVelocity(5, -15.0);
+	this->water_flag = false;
+}
+void MyWindow::throw_water_ball()
+{
+	SkeletonPtr original_skel = mWorld->getSkeleton("ball");
+	mWorld->removeSkeleton(original_skel);
+	mBall = Skeleton::create("ball");
+	float ball_rad = 0.11;
+	SkelGen skel;
+	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Blue());
+	mBall->setPosition(4, 1.8);
+	mBall->setPosition(5, 8.0);
+	mWorld->addSkeleton(mBall);
+	mBall->setVelocity(5, -15.0);
+	this->water_flag = true;
+}
 
+bool MyWindow::ballHeadCollision()
+{
+	auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
+	auto shoulder_collision = collisionEngine->createCollisionGroup();
+	auto head_collision = collisionEngine->createCollisionGroup();
+	shoulder_collision->addShapeFramesOf(mHubo->getBodyNode("rclavicle"));
+	shoulder_collision->addShapeFramesOf(mHubo->getBodyNode("lclavicle"));
+	shoulder_collision->addShapeFramesOf(mBall->getBodyNode(0));
+	head_collision->addShapeFramesOf(mHubo->getBodyNode("head"));
+	head_collision->addShapeFramesOf(mBall->getBodyNode(0));
+	bool collision = head_collision->collide() || shoulder_collision->collide();
+
+	return collision;
 }
 
 void MyWindow::motionblend_init()
@@ -123,21 +149,28 @@ void MyWindow::motionblend_init()
 
 void MyWindow::keyboard(unsigned char key, int x, int y)
 {
+	std::unique_ptr<MotionGraph> temp = std::make_unique<MotionGraph>(mHubo, mWorld->getTimeStep());
 	switch(key)
 	{
 		//Implement Here 
 		case 'q':
-		PD_flag = !PD_flag;
+		this -> throw_normal_ball();
 		break;
 		case 'r':
-		this -> throw_ball();
+		this -> throw_water_ball();
 		break;
 		case 't':
-		bvh_flag = true;
+		cnt = 0;
 		mMotions = mbvh->expMotionGetter();
 		this -> motionblend_init();
+		bvh_flag = true;
 		break;
-
+		case 'a':
+		cnt = 0;
+		mMotions = temp-> run_then_jump();
+		// std::cout << mMotions[0].transpose() << std::endl;
+		this -> motionblend_init();
+		bvh_flag = true;
 		default:
 		SimWindow::keyboard(key, x, y);
 	}	
@@ -157,11 +190,21 @@ void MyWindow::timeStepping()
 			PD_flag = true;
 		}
 	}
+
+	if(this->ballHeadCollision())
+	{
+		if(water_flag)
+		{
+			mController->setRootZero();
+		}
+	}
+
 	if(PD_flag)
 	{
 		mController->clearForces();
 		mController->addSPDForces();
 	}
+
 	SimWindow::timeStepping();
 
 }
@@ -281,24 +324,24 @@ void MyWindow::draw()
 
 // void MyWindow::tempCollision()
 // {
-// 	// std::cout << mWorld->getSimFrames() << std::endl;
-// 	auto cont = mWorld->getLastCollisionResult().getContacts();
-// 	// std::cout << cont[0].force <<std::endl;
-// 	// std::cout << mWorld->getLastCollisionResult().getContact(0).force << std::endl;
-// 	// for(int i= 0; i < cont.size(); ++i){
-// 	// 	std::cout << mWorld->getLastCollisionResult().getContact(i).collisionObject1->getShapeFrame()->getName() <<std::endl;
-// 	// 	std::cout << mWorld->getLastCollisionResult().getContact(i).collisionObject2->getShapeFrame()->getName() <<std::endl;
-// 	// }
-// 	// auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
-// 	// auto objGroup = collisionEngine->createCollisionGroup(mObj.get());
-// 	// auto finger1 = collisionEngine->createCollisionGroup((mArm_r->getBodyNode("distphalanx2")));
-// 	// auto handGroup = collisionEngine->createCollisionGroup();
-// 	// handGroup->addShapeFramesOf(mArm_r->getBodyNode("thumb distphalanx"));	
-// 	// handGroup->distance(objGroup.get());
-// 	// handGroup->removeShapeFramesOf(mArm_r->getBodyNode("thumb distphalanx"));
-// 	// for(int i =0 ; i < 4;++i){
-// 	// 	handGroup->addShapeFramesOf(mArm_r->getBodyNode("distphalanx"+ std::to_string(i)));
-// 	// 	std::cout <<"collide" << handGroup->collide(finger1.get()) << std::endl;
-// 	// 	handGroup->removeShapeFramesOf(mArm_r->getBodyNode("distphalanx"+ std::to_string(i)));
-// 	// }
+// 	std::cout << mWorld->getSimFrames() << std::endl;
+	// auto cont = mWorld->getLastCollisionResult().getContacts();
+	// std::cout << cont[0].force <<std::endl;
+	// std::cout << mWorld->getLastCollisionResult().getContact(0).force << std::endl;
+	// for(int i= 0; i < cont.size(); ++i){
+	// 	std::cout << mWorld->getLastCollisionResult().getContact(i).collisionObject1->getShapeFrame()->getName() <<std::endl;
+	// 	std::cout << mWorld->getLastCollisionResult().getContact(i).collisionObject2->getShapeFrame()->getName() <<std::endl;
+	// }
+// 	auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
+// 	auto objGroup = collisionEngine->createCollisionGroup(mObj.get());
+// 	auto finger1 = collisionEngine->createCollisionGroup((mArm_r->getBodyNode("distphalanx2")));
+// 	auto handGroup = collisionEngine->createCollisionGroup();
+// 	handGroup->addShapeFramesOf(mArm_r->getBodyNode("thumb distphalanx"));	
+// 	handGroup->distance(objGroup.get());
+// 	handGroup->removeShapeFramesOf(mArm_r->getBodyNode("thumb distphalanx"));
+// 	for(int i =0 ; i < 4;++i){
+// 		handGroup->addShapeFramesOf(mArm_r->getBodyNode("distphalanx"+ std::to_string(i)));
+// 		std::cout <<"collide" << handGroup->collide(finger1.get()) << std::endl;
+// 		handGroup->removeShapeFramesOf(mArm_r->getBodyNode("distphalanx"+ std::to_string(i)));
+// 	}
 // }

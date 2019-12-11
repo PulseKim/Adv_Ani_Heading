@@ -17,6 +17,7 @@ public:
 	void clearForces();
 	void addSPDForces();
 	void setFreeJointPosition();
+	void setRootZero();
 	void addPDForces();
 	Eigen::VectorXd getForces();
 

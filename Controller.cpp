@@ -20,12 +20,24 @@ void Controller::jointControlSetter()
         mKp(i,i) = mag_Kp;
         mKd(i,i) = 2 * std::sqrt(mag_Kp);
     }
-    mag_Kp = 1500;
-    for(std::size_t i = 3; i < 6; ++i){
-        mKp(i,i) = mag_Kp;
-        mKd(i,i) = 2 * std::sqrt(mag_Kp);
-    }
+    mag_Kp = 1000;
+    mKp(4,4) = mag_Kp;
+    mKd(4,4) = 2 * std::sqrt(mag_Kp);
+    mag_Kp = 5000;
+    mKp(3,3) = mag_Kp;
+    mKd(3,3) = 2 * std::sqrt(mag_Kp);
+    mKp(5,5) = mag_Kp;
+    mKd(5,5) = 2 * std::sqrt(mag_Kp);
     this->setTargetPosition(mHubo->getPositions());
+}
+
+void Controller::setRootZero()
+{
+    for(int i =0 ; i < 6 ; ++i)
+    {
+        mKp(i,i) = 0.0;
+        mKd(i,i) = 0.0;
+    }
 }
 
 void Controller::setTargetPosition(const Eigen::VectorXd& pose)

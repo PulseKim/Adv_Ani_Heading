@@ -1,5 +1,5 @@
 #include "MotionGraph.h"
-
+using namespace dart::math;
 
 MotionGraph::MotionGraph(SkeletonPtr &biped, float time_step)
 {
@@ -13,8 +13,67 @@ MotionGraph::MotionGraph(SkeletonPtr &biped, float time_step)
 std::vector<Eigen::VectorXd> MotionGraph::walk_then_jump()
 {
 	auto blender = std::make_unique<MotionBlender>(mWalk[mWalk.size()-1], mJump[0]);
+	std::vector<Eigen::VectorXd> aligned_jump;
+	for(int i = 0 ; i < mJump.size(); ++i)
+	{
+		aligned_jump.push_back(blender->root_aligned_pose(mJump[i]));
+	}
 	std::vector<Eigen::VectorXd> interpolate;
-	
+	interpolate = this -> smoothTransition(mWalk[mWalk.size()-1], aligned_jump[0], 200);
+	std::vector<Eigen::VectorXd> WalkJump;
+	WalkJump.insert(WalkJump.end(), mWalk.begin(), mWalk.end());
+	WalkJump.insert(WalkJump.end(), interpolate.begin(), interpolate.end());
+	WalkJump.insert(WalkJump.end(), aligned_jump.begin(), aligned_jump.end());
+
+	return WalkJump;
+}
+
+std::vector<Eigen::VectorXd> MotionGraph::run_then_jump()
+{
+	auto blender = std::make_unique<MotionBlender>(mRun[mRun.size()-1], mJump[0]);
+	std::vector<Eigen::VectorXd> aligned_jump;
+	for(int i = 0 ; i < mJump.size(); ++i)
+	{
+		aligned_jump.push_back(blender->root_aligned_pose(mJump[i]));
+	}
+	std::vector<Eigen::VectorXd> interpolate;
+	interpolate = this -> smoothTransition(mRun[mRun.size()-1], aligned_jump[0], 200);
+	std::vector<Eigen::VectorXd> RunJump;
+	RunJump.insert(RunJump.end(), mRun.begin(), mRun.end());
+	RunJump.insert(RunJump.end(), interpolate.begin(), interpolate.end());
+	RunJump.insert(RunJump.end(), aligned_jump.begin(), aligned_jump.end());
+
+	return RunJump;
+}
+
+
+std::vector<Eigen::VectorXd> MotionGraph::smoothTransition(Eigen::VectorXd &current, Eigen::VectorXd &future, int blend_step)
+{
+	std::vector<Eigen::VectorXd> targets;
+	for(int i = 1; i < blend_step ; ++i)
+	{
+		Eigen::VectorXd frame = Eigen::VectorXd::Zero(current.size());
+		float t = float(i) / float(blend_step);
+		for(int j = 0 ; j < current.size(); j+=3)
+		{
+			if(j == 3)
+			{
+				for(int k = 0; k < 3; ++k)
+					frame[j+k] = (future[j+k] - current[j+k]) * t + current[j+k];
+			}
+			else
+			{
+				Eigen::Quaterniond quat_current = expToQuat(Eigen::Vector3d(current[j], current[j+1], current[j+2]));
+				Eigen::Quaterniond quat_future = expToQuat(Eigen::Vector3d(future[j], future[j+1], future[j+2]));
+				Eigen::Quaterniond quat_blend = quat_current.slerp(t, quat_future);
+				Eigen::Vector3d blend_axis = quatToExp(quat_blend);
+				for(int k = 0; k < 3; ++k)
+					frame[j+k] = blend_axis[k];
+			}
+		}
+		targets.push_back(frame);
+	}
+	return targets;
 }
 
 void MotionGraph::walk()
@@ -29,7 +88,8 @@ void MotionGraph::jump()
 	std::string file_name = "16_01_jump.bvh";
 	auto mbvh = std::make_unique<bvh>(file_name, mHubo, mTimeStep);
 	mJump = mbvh -> expMotionGetter();
-
+	for(int i = 0; i < 500; ++i)
+		mJump.pop_back();
 }
 
 void MotionGraph::run()

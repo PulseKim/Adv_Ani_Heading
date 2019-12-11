@@ -34,7 +34,9 @@ public:
 	std::string GetCurrentWorkingDir(); 
 	void motionblend_init();
 
-	void throw_ball();
+	void throw_normal_ball();
+	void throw_water_ball();
+	bool ballHeadCollision();
 
 	// //Overriding functions
 	void keyboard(unsigned char key, int x, int y) override;
@@ -53,6 +55,7 @@ public:
 
 protected:
 	bool bvh_flag;
+	bool water_flag;
 	bool PD_flag;
 	SkeletonPtr	mFloor;
 	SkeletonPtr mHubo;
@@ -65,6 +68,7 @@ public:
 	int cnt;
 	int motion_count;
 	int motion_peak;
+
 };
 
 #endif

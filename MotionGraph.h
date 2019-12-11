@@ -13,6 +13,10 @@ class MotionGraph
 {
 public:
 	MotionGraph(SkeletonPtr &biped, float time_step);
+	std::vector<Eigen::VectorXd> walk_then_jump();
+	std::vector<Eigen::VectorXd> run_then_jump();
+	std::vector<Eigen::VectorXd> smoothTransition(Eigen::VectorXd &current, Eigen::VectorXd &future, int blend_step);
+
 	void walk();
 	void jump();
 	void run();
