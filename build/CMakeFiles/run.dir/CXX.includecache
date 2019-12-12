@@ -65,6 +65,8 @@ SkelGen.h
 /home/sonic/Projects/Animation Project/SkelGen.h
 MotionGraph.h
 /home/sonic/Projects/Animation Project/MotionGraph.h
+ThrowingBall.h
+/home/sonic/Projects/Animation Project/ThrowingBall.h
 
 /home/sonic/Projects/Animation Project/SkelGen.cpp
 iostream
@@ -81,6 +83,16 @@ dart/gui/gui.hpp
 /home/sonic/Projects/Animation Project/dart/gui/gui.hpp
 dart/utils/utils.hpp
 /home/sonic/Projects/Animation Project/dart/utils/utils.hpp
+
+/home/sonic/Projects/Animation Project/ThrowingBall.cpp
+ThrowingBall.h
+/home/sonic/Projects/Animation Project/ThrowingBall.h
+
+/home/sonic/Projects/Animation Project/ThrowingBall.h
+dart/dart.hpp
+/home/sonic/Projects/Animation Project/dart/dart.hpp
+MotionGraph.h
+/home/sonic/Projects/Animation Project/MotionGraph.h
 
 /home/sonic/Projects/Animation Project/bvh.cpp
 bvh.h

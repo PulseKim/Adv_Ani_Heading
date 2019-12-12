@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/home/sonic/Projects/Animation Project/MotionGraph.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/MotionGraph.cpp.o"
   "/home/sonic/Projects/Animation Project/MyWindow.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/MyWindow.cpp.o"
   "/home/sonic/Projects/Animation Project/SkelGen.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/SkelGen.cpp.o"
+  "/home/sonic/Projects/Animation Project/ThrowingBall.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/ThrowingBall.cpp.o"
   "/home/sonic/Projects/Animation Project/bvh.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/bvh.cpp.o"
   "/home/sonic/Projects/Animation Project/main.cpp" "/home/sonic/Projects/Animation Project/build/CMakeFiles/run.dir/main.cpp.o"
   )

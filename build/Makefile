@@ -258,6 +258,33 @@ SkelGen.cpp.s:
 	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/SkelGen.cpp.s
 .PHONY : SkelGen.cpp.s
 
+ThrowingBall.o: ThrowingBall.cpp.o
+
+.PHONY : ThrowingBall.o
+
+# target to build an object file
+ThrowingBall.cpp.o:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/ThrowingBall.cpp.o
+.PHONY : ThrowingBall.cpp.o
+
+ThrowingBall.i: ThrowingBall.cpp.i
+
+.PHONY : ThrowingBall.i
+
+# target to preprocess a source file
+ThrowingBall.cpp.i:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/ThrowingBall.cpp.i
+.PHONY : ThrowingBall.cpp.i
+
+ThrowingBall.s: ThrowingBall.cpp.s
+
+.PHONY : ThrowingBall.s
+
+# target to generate assembly for a file
+ThrowingBall.cpp.s:
+	$(MAKE) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/ThrowingBall.cpp.s
+.PHONY : ThrowingBall.cpp.s
+
 bvh.o: bvh.cpp.o
 
 .PHONY : bvh.o
@@ -336,6 +363,9 @@ help:
 	@echo "... SkelGen.o"
 	@echo "... SkelGen.i"
 	@echo "... SkelGen.s"
+	@echo "... ThrowingBall.o"
+	@echo "... ThrowingBall.i"
+	@echo "... ThrowingBall.s"
 	@echo "... bvh.o"
 	@echo "... bvh.i"
 	@echo "... bvh.s"

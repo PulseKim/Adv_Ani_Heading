@@ -4,6 +4,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/run.dir/MotionGraph.cpp.o"
   "CMakeFiles/run.dir/MyWindow.cpp.o"
   "CMakeFiles/run.dir/SkelGen.cpp.o"
+  "CMakeFiles/run.dir/ThrowingBall.cpp.o"
   "CMakeFiles/run.dir/bvh.cpp.o"
   "CMakeFiles/run.dir/main.cpp.o"
   "run.pdb"
