@@ -11,6 +11,7 @@
 #include "Controller.h"
 #include "SkelGen.h"
 #include "MotionGraph.h"
+#include "ThrowingBall.h"
 // #include "IkSolver.h"
 
 
@@ -42,18 +43,10 @@ public:
 	void keyboard(unsigned char key, int x, int y) override;
 	void timeStepping() override;
 	void draw() override;
-
-	// //Useful functions
-	// Eigen::VectorXd ForwardKinematicsMovement(int current_idx, int total_steps, const Eigen::VectorXd original, const Eigen::VectorXd target);
-	// void playSavedMovement(std::string filePath);
-	// double degToRad(double degree);
-	// void tempCollision();
-	// void testing();
-	// void drawFrame();
-	// void drawNormals();
-	// void showDirection(bool flag, Eigen::Vector3d begin, Eigen::Vector3d dir);
+	
 
 protected:
+	bool mCartoonFlag;
 	bool bvh_flag;
 	bool water_flag;
 	bool PD_flag;
@@ -64,6 +57,9 @@ protected:
 	std::vector<Eigen::VectorXd> mMotions;
 	std::unique_ptr<bvh> mbvh;
 	std::unique_ptr<MotionBlender> mCurrentMotionblender;
+	std::unique_ptr<MotionGraph> mMotionGraph;
+	std::unique_ptr<Throw> mBallGenerator;
+	float mBallGenTime;
 public:
 	int cnt;
 	int motion_count;

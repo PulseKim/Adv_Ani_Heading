@@ -20,6 +20,8 @@ public:
 	void walk();
 	void jump();
 	void run();
+	float total_run_dist();
+	float total_walk_dist();
 	float walk_dist();
 	float run_dist();
 	float jump_height();
@@ -31,6 +33,8 @@ private:
 	std::vector<Eigen::VectorXd> mWalk;
 	std::vector<Eigen::VectorXd> mRun;
 	std::vector<Eigen::VectorXd> mJump;
+public:
+	int mJumpTime;
 };
 
 #endif

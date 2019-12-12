@@ -40,6 +40,15 @@ void Controller::setRootZero()
     }
 }
 
+void Controller::setAllZero()
+{
+    for(int i =0 ; i < mHubo->getNumDofs() ; ++i)
+    {
+        mKp(i,i) = 0.50;
+        mKd(i,i) = 0.50;
+    }
+}
+
 void Controller::setTargetPosition(const Eigen::VectorXd& pose)
 {
 	mTargetPositions = pose;

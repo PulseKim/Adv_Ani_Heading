@@ -8,6 +8,7 @@ MotionGraph::MotionGraph(SkeletonPtr &biped, float time_step)
 	this -> walk();
 	this -> jump();
 	this -> run();
+
 }
 
 std::vector<Eigen::VectorXd> MotionGraph::walk_then_jump()
@@ -42,6 +43,9 @@ std::vector<Eigen::VectorXd> MotionGraph::run_then_jump()
 	RunJump.insert(RunJump.end(), mRun.begin(), mRun.end());
 	RunJump.insert(RunJump.end(), interpolate.begin(), interpolate.end());
 	RunJump.insert(RunJump.end(), aligned_jump.begin(), aligned_jump.end());
+	this -> jump_height();
+	mJumpTime += mRun.size();
+	mJumpTime += interpolate.size();
 
 	return RunJump;
 }
@@ -116,15 +120,37 @@ float MotionGraph::run_dist()
 	return dist;
 }
 
+float MotionGraph::total_walk_dist()
+{
+	Eigen::VectorXd start = mWalk[0];
+	Eigen::VectorXd end = mWalk[mWalk.size()-1];
+	float dist =  float(abs(start[5] - end[5]));
+	return dist;
+}
+
+float MotionGraph::total_run_dist()
+{
+	Eigen::VectorXd start = mRun[0];
+	Eigen::VectorXd end = mRun[mRun.size()-1];
+	float dist =  float(abs(start[5] - end[5]));
+	return dist;
+}
+
 float MotionGraph::jump_height()
 {
 	float start = mJump[0][4];
 	float dist = 0;
+
 	for(int i = 1; i < mJump.size(); ++i)
 	{
 		float curr = mJump[i][4] - start;
 		if(curr > dist)
+		{
 			dist = curr;
-	}	
+			mJumpTime = i;
+		}
+	}
+	// float head_pos = mHubo->getBodyNode("head")->getCOM()[1] - mHubo->getBodyNode("torso")->getCOM()[1] + 0.82 - 0.07;
+	// std::cout << mHubo->getBodyNode("head")->getCOM()[1] << std::endl;	
 	return dist;
 }

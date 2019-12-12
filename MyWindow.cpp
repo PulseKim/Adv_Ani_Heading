@@ -8,10 +8,10 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 	this->initParameters();
 	this->initWindowSetting();
 	std::string file_name = "16_01_jump.bvh";
-	// std::string file_name = "16_34_slow walk, stop.bvh";
-	// std::string file_name = "16_46_run&jog.bvh";
 	mbvh = std::make_unique<bvh>(file_name, mHubo, mWorld->getTimeStep());
-	
+	mMotionGraph = std::make_unique<MotionGraph>(mHubo, mWorld->getTimeStep());
+	mBallGenerator = std::make_unique<Throw>(mHubo, mWorld->getTimeStep());
+	mCartoonFlag = true;
 }
 
 
@@ -72,11 +72,10 @@ void MyWindow::initSkeleton()
 void MyWindow::setSkeleton()
 {
 	Eigen::VectorXd default_pose = mHubo->getPositions();
-	default_pose[4] = 0.82;
+	default_pose[4] = 0.745;
 	mHubo->setPositions(default_pose);
 	mBall->setPosition(3, 0.6);
-	mBall->setPosition(4, 1.2);
-
+	mBall->setPosition(4, -1.2);
 	// Visual Aspect
 	auto visualShapenodes = mFloor->getBodyNode(0)->getShapeNodesWith<VisualAspect>();
 	// std::cout << visualShapenodes[0]->getVisualAspect()->getColor() << std::endl;s
@@ -107,11 +106,16 @@ void MyWindow::throw_normal_ball()
 	float ball_rad = 0.11;
 	SkelGen skel;
 	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
-	mBall->setPosition(4, 1.8);
-	mBall->setPosition(5, 8.0);
-	mWorld->addSkeleton(mBall);
-	mBall->setVelocity(5, -15.0);
-	// mBall->setAcceleration(5, 2.0);
+
+	auto last_motion = mMotions[mMotions.size()-1];
+	mBall->setPosition(3, mHubo->getCOM()[0]  + mBallGenerator->mInitPos[0]);
+	mBall->setPosition(4, mBallGenerator->mInitPos[1]);
+	mBall->setPosition(5, mHubo->getCOM()[2] + mBallGenerator->mInitPos[2]);
+	mBall->setVelocity(3, mBallGenerator->mInitVel[0]);
+	mBall->setVelocity(4, mBallGenerator->mInitVel[1]);
+	mBall->setVelocity(5, mBallGenerator->mInitVel[2]);
+	
+	mWorld->addSkeleton(mBall);	
 	this->water_flag = false;
 }
 void MyWindow::throw_water_ball()
@@ -126,7 +130,6 @@ void MyWindow::throw_water_ball()
 	mBall->setPosition(5, 8.0);
 	mWorld->addSkeleton(mBall);
 	mBall->setVelocity(5, -15.0);
-	// mBall->setAcceleration(5, 2.0);
 	this->water_flag = true;
 }
 
@@ -152,13 +155,14 @@ void MyWindow::motionblend_init()
 
 void MyWindow::keyboard(unsigned char key, int x, int y)
 {
-	std::unique_ptr<MotionGraph> temp = std::make_unique<MotionGraph>(mHubo, mWorld->getTimeStep());
 	switch(key)
 	{
 		//Implement Here 
 		case 'q':
-		this -> throw_normal_ball();
+		this -> mCartoonFlag = !mCartoonFlag;
 		break;
+		// case 'e':
+		// break;
 		case 'r':
 		this -> throw_water_ball();
 		break;
@@ -170,10 +174,11 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 		break;
 		case 'a':
 		cnt = 0;
-		mMotions = temp-> run_then_jump();
-		// std::cout << mMotions[0].transpose() << std::endl;
+		mMotions = mMotionGraph-> run_then_jump();
 		this -> motionblend_init();
 		bvh_flag = true;
+		mBallGenerator->throw_target_default(3.0);
+		mBallGenTime = mBallGenerator->mTimeStep * 1000;
 		default:
 		SimWindow::keyboard(key, x, y);
 	}	
@@ -186,6 +191,10 @@ void MyWindow::timeStepping()
 	{
 		Eigen::VectorXd blend_current = mCurrentMotionblender->root_aligned_pose(mMotions[cnt]);
 		mController->setTargetPosition(blend_current);
+		if(mMotionGraph->mJumpTime - cnt == int(mBallGenTime))
+		{
+			this->throw_normal_ball();
+		}
 		cnt++;
 		if(cnt == mMotions.size()){
 			cnt = 0;
@@ -198,7 +207,10 @@ void MyWindow::timeStepping()
 	{
 		if(water_flag)
 		{
-			mController->setRootZero();
+			if(mCartoonFlag)
+				mController->setAllZero();
+			else
+				mController->setRootZero();
 		}
 		else
 		{
@@ -326,30 +338,5 @@ void MyWindow::draw()
 // 		glVertex3f(trans[0], trans[1], trans[2]);
 // 		glVertex3f(trans[0] + current_axis[0], trans[1] + current_axis[1], trans[2] + current_axis[2]);
 // 		glEnd();
-// 	}
-// }
-
-
-// void MyWindow::tempCollision()
-// {
-// 	std::cout << mWorld->getSimFrames() << std::endl;
-	// auto cont = mWorld->getLastCollisionResult().getContacts();
-	// std::cout << cont[0].force <<std::endl;
-	// std::cout << mWorld->getLastCollisionResult().getContact(0).force << std::endl;
-	// for(int i= 0; i < cont.size(); ++i){
-	// 	std::cout << mWorld->getLastCollisionResult().getContact(i).collisionObject1->getShapeFrame()->getName() <<std::endl;
-	// 	std::cout << mWorld->getLastCollisionResult().getContact(i).collisionObject2->getShapeFrame()->getName() <<std::endl;
-	// }
-// 	auto collisionEngine = mWorld->getConstraintSolver()->getCollisionDetector();
-// 	auto objGroup = collisionEngine->createCollisionGroup(mObj.get());
-// 	auto finger1 = collisionEngine->createCollisionGroup((mArm_r->getBodyNode("distphalanx2")));
-// 	auto handGroup = collisionEngine->createCollisionGroup();
-// 	handGroup->addShapeFramesOf(mArm_r->getBodyNode("thumb distphalanx"));	
-// 	handGroup->distance(objGroup.get());
-// 	handGroup->removeShapeFramesOf(mArm_r->getBodyNode("thumb distphalanx"));
-// 	for(int i =0 ; i < 4;++i){
-// 		handGroup->addShapeFramesOf(mArm_r->getBodyNode("distphalanx"+ std::to_string(i)));
-// 		std::cout <<"collide" << handGroup->collide(finger1.get()) << std::endl;
-// 		handGroup->removeShapeFramesOf(mArm_r->getBodyNode("distphalanx"+ std::to_string(i)));
 // 	}
 // }

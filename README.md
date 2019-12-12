@@ -21,10 +21,8 @@ In ubuntu: libdart6-all-dev
 ### User Interface
 Press ' ' to Start simulation
 
-Press 'q' to Throw a normal ball to a man
-
 Press 'r' to Throw a water-filled ball to a man
 
 Press 't' to see Jump motion
 
-Press 'a' to see Run -> Jump motion
+Press 'a' to see Run -> Jump -> normal ball header/
