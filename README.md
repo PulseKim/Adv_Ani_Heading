@@ -21,8 +21,10 @@ In ubuntu: libdart6-all-dev
 ### User Interface
 Press ' ' to Start simulation
 
-Press 'r' to Throw a water-filled ball to a man
+Press 'q' to Switch Stiff Motion / Cartoonistic Motion
+
+Press 'r' to Switch NormalBall / WaterBall
 
 Press 't' to see Jump motion
 
-Press 'a' to see Run -> Jump -> normal ball header/
+Press 'a' to see Run -> Jump -> Header/

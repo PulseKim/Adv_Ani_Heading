@@ -11,7 +11,8 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 	mbvh = std::make_unique<bvh>(file_name, mHubo, mWorld->getTimeStep());
 	mMotionGraph = std::make_unique<MotionGraph>(mHubo, mWorld->getTimeStep());
 	mBallGenerator = std::make_unique<Throw>(mHubo, mWorld->getTimeStep());
-	mCartoonFlag = true;
+	mCartoonFlag = false;
+	this->water_flag = false;
 }
 
 
@@ -114,8 +115,8 @@ void MyWindow::throw_normal_ball()
 	mBall->setVelocity(3, mBallGenerator->mInitVel[0]);
 	mBall->setVelocity(4, mBallGenerator->mInitVel[1]);
 	mBall->setVelocity(5, mBallGenerator->mInitVel[2]);
-	
 	mWorld->addSkeleton(mBall);	
+	
 	this->water_flag = false;
 }
 void MyWindow::throw_water_ball()
@@ -126,10 +127,16 @@ void MyWindow::throw_water_ball()
 	float ball_rad = 0.11;
 	SkelGen skel;
 	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Blue());
-	mBall->setPosition(4, 1.8);
-	mBall->setPosition(5, 8.0);
-	mWorld->addSkeleton(mBall);
-	mBall->setVelocity(5, -15.0);
+	
+	auto last_motion = mMotions[mMotions.size()-1];
+	mBall->setPosition(3, mHubo->getCOM()[0]  + mBallGenerator->mInitPos[0]);
+	mBall->setPosition(4, mBallGenerator->mInitPos[1]);
+	mBall->setPosition(5, mHubo->getCOM()[2] + mBallGenerator->mInitPos[2]);
+	mBall->setVelocity(3, mBallGenerator->mInitVel[0]);
+	mBall->setVelocity(4, mBallGenerator->mInitVel[1]);
+	mBall->setVelocity(5, mBallGenerator->mInitVel[2]);	
+	mWorld->addSkeleton(mBall);	
+
 	this->water_flag = true;
 }
 
@@ -164,7 +171,7 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 		// case 'e':
 		// break;
 		case 'r':
-		this -> throw_water_ball();
+		this -> water_flag = !water_flag;
 		break;
 		case 't':
 		cnt = 0;
@@ -176,9 +183,10 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 		cnt = 0;
 		mMotions = mMotionGraph-> run_then_jump();
 		this -> motionblend_init();
-		bvh_flag = true;
 		mBallGenerator->throw_target_default(3.0);
 		mBallGenTime = mBallGenerator->mTimeStep * 1000;
+		bvh_flag = true;
+
 		default:
 		SimWindow::keyboard(key, x, y);
 	}	
@@ -193,7 +201,10 @@ void MyWindow::timeStepping()
 		mController->setTargetPosition(blend_current);
 		if(mMotionGraph->mJumpTime - cnt == int(mBallGenTime))
 		{
-			this->throw_normal_ball();
+			if(water_flag)
+				this->throw_water_ball();
+			else
+				this->throw_normal_ball();
 		}
 		cnt++;
 		if(cnt == mMotions.size()){
