@@ -205,6 +205,21 @@ Timer(int value)
 		mSoftWorld->AddConstraint(mCloth->PosConstraint);
 		*/
 
+		mSoftWorld->RemoveConstraint(mBody->RefPosConstraint);
+		delete mBody->RefPosConstraint;
+		//mBody->RefPosition = Eigen::Vector3d(0, 0, 0);
+		mBody->RefPosition[1] += 0.05f;
+		mBody->RefPosConstraint = new FEM::AttachmentConstraint(500000, mBody->RefID, mBody->RefPosition);
+		mSoftWorld->AddConstraint(mBody->RefPosConstraint);
+
+		mSoftWorld->RemoveConstraint(mBody->EndPosConstraint);
+		delete mBody->EndPosConstraint;
+		//mBody->EndPosition = Eigen::Vector3d(10.0f, 0, 0);
+		mBody->EndPosition[1] += 0.05f;
+		mBody->EndPosConstraint = new FEM::AttachmentConstraint(500000, mBody->EndID, mBody->EndPosition);
+		mSoftWorld->AddConstraint(mBody->EndPosConstraint);
+
+
 
 		// auto start_time = std::chrono::system_clock::now();
 		mSoftWorld->TimeStepping();
