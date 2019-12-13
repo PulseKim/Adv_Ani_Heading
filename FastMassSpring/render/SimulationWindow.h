@@ -32,6 +32,8 @@ protected:
 	FEM::World*					mSoftWorld;
 	Cloth*						mCloth;
 
+	BodyModel*					mBody;
+
 	bool mIsRotate;
 	bool mPlay;
 	bool mCapture;

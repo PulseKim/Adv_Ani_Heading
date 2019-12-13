@@ -52,3 +52,27 @@ GridMesh(const int& w_num, const int& h_num,
 		}
 	}
 }
+/*
+SkirtMesh::
+SkirtMesh(const int& w_num, const int& h_num,
+		const double& w_length, const double& h_length,
+		const Eigen::Vector3d& origin,
+		const Eigen::Affine3d& T)
+	:Mesh()
+{
+	//Create particles
+	for(int i = 0 ; i < w_num ; i++)
+	{
+		for(int j = 0 ; j < h_num ; j++)
+		{
+			Eigen::Vector3d vertex_position;
+			vertex_position[0] = origin[0]+w_grid*i;
+			vertex_position[1] = origin[1]+5.0;
+			vertex_position[2] = origin[2]+h_grid*j;
+			vertex_position= T*vertex_position;
+            mParticles.push_back(vertex_position);
+
+		}
+	}
+}
+*/

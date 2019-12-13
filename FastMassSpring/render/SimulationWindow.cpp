@@ -32,9 +32,13 @@ SimulationWindow()
 		100, 											//max_iteration	
 		0.99											//damping_coeff
 		);
+	//mCloth = new Cloth();
+	//mCloth->Initialize(mSoftWorld);
 
-	mCloth = new Cloth();
-	mCloth->Initialize(mSoftWorld);
+	//Do things
+	mBody = new BodyModel(10.0f, 20, 1.5f, 2.0f, 16);
+	mBody->Initialize(mSoftWorld);
+
 	mSoftWorld->Initialize();
 }
 void
@@ -75,6 +79,16 @@ Display()
     	true,Eigen::Vector3d(0.0,0.0,0.0));
 	
 	const auto& particles = mSoftWorld->mX;
+
+	for(int i=0; i<particles.size()/3; i++) 
+	{
+		GUI::DrawPoint(particles.block<3,1>(3*i,0),3.0,Eigen::Vector3d(0,0,0));
+	}
+
+	GUI::DrawPoint(particles.block<3,1>(3*9,0),10.0,Eigen::Vector3d(1,0,0));
+
+	/*
+	const auto& particles = mSoftWorld->mX;
 	const auto& springs = mCloth->GetMesh()->GetSprings();
 
 	for(int i=0; i<particles.size()/3; i++) 
@@ -90,6 +104,7 @@ Display()
 		auto p1 = particles.block<3,1>(3*s[1],0);
 		GUI::DrawLine(p0,p1);
 	}
+	*/
 
 	if(mCapture) Screenshot();
 
@@ -179,6 +194,18 @@ SimulationWindow::
 Timer(int value)
 {
 	if(mPlay) {
+
+		//Added for movement
+		/*
+		mSoftWorld->RemoveConstraint(mCloth->PosConstraint);
+		delete mCloth->PosConstraint;
+
+		mCloth->RefPosition[1] += 0.05f;
+		mCloth->PosConstraint=new FEM::AttachmentConstraint(500000,1,mCloth->RefPosition);
+		mSoftWorld->AddConstraint(mCloth->PosConstraint);
+		*/
+
+
 		// auto start_time = std::chrono::system_clock::now();
 		mSoftWorld->TimeStepping();
 		// auto end_time = std::chrono::system_clock::now();

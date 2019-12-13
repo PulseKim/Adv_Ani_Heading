@@ -14,5 +14,20 @@ public:
 		const Eigen::Vector3d& origin,
 		const Eigen::Affine3d& T = Eigen::Affine3d::Identity());
 };
+
+/*
+class SkirtMesh : public Mesh
+{
+public:
+	GridMesh(const int& w_num, const int& h_num,
+		const double& w_length, const double& h_length,
+		const Eigen::Vector3d& origin,
+		const Eigen::Affine3d& T = Eigen::Affine3d::Identity());
 };
+*/
+
+};
+
+
+
 #endif
