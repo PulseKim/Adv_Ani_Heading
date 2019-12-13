@@ -21,6 +21,8 @@ public:
   BodyNode* freeBox(const SkeletonPtr& skel, BodyNode* parent, const std::string& name, const Eigen::Vector3d boxsize, const Eigen::Vector3d offChild, const Eigen::Vector3d offParent, double mass, const Eigen::Vector3d color);
   BodyNode* freeSphere(const SkeletonPtr& skel, BodyNode* parent, const std::string& name, double radius, const Eigen::Vector3d offChild, const Eigen::Vector3d offParent, double mass, const Eigen::Vector3d color);
   BodyNode* freeSphere(const SkeletonPtr& skel, const std::string& name, double radius, const Eigen::Vector3d offChild, double mass, const Eigen::Vector3d color);
+  BodyNode* freeSoftSphere(const SkeletonPtr& skel, const std::string& name, double radius, const Eigen::Vector3d offChild, double mass, const Eigen::Vector3d color);
+
 
   BodyNode* weldBox(const SkeletonPtr& skel, const std::string& name, const Eigen::Vector3d boxsize, const Eigen::Vector3d offChild, double mass, const Eigen::Vector3d color);  
   BodyNode* weldBox(const SkeletonPtr& skel, BodyNode* parent, const std::string& name, const Eigen::Vector3d boxsize, const Eigen::Vector3d offChild, const Eigen::Vector3d offParent, double mass, const Eigen::Vector3d color);

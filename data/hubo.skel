@@ -43,7 +43,7 @@
 			<body name="torso">
 				<transformation>0.0 0.0 0.0 0.0 0.0 0.0</transformation>
 				<inertia>
-					<mass>1.0</mass>
+					<mass>1.5</mass>
 					<offset>0 0 0</offset>
 				</inertia>
 				<visualization_shape>
@@ -427,7 +427,7 @@
 			<body name="handl">
 				<transformation>0.1738 -0.01 -0.05 0.0 0.0 0.0</transformation>
 				<inertia>
-					<mass>1.0</mass>
+					<mass>0.5</mass>
 					<offset>0 0 0</offset>
 				</inertia>
 				<visualization_shape>
@@ -451,7 +451,7 @@
 			<body name="handr">
 				<transformation>-0.174 -0.01 -0.05 0.0 0.0 0.0</transformation>
 				<inertia>
-					<mass>1.0</mass>
+					<mass>0.5</mass>
 					<offset>0 0 0</offset>
 				</inertia>
 				<visualization_shape>

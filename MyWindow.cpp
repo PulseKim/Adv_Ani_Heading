@@ -106,8 +106,8 @@ void MyWindow::throw_normal_ball()
 	mBall = Skeleton::create("ball");
 	float ball_rad = 0.11;
 	SkelGen skel;
-	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
-
+	// skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
+	skel.freeSoftSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
 	auto last_motion = mMotions[mMotions.size()-1];
 	mBall->setPosition(3, mHubo->getCOM()[0]  + mBallGenerator->mInitPos[0]);
 	mBall->setPosition(4, mBallGenerator->mInitPos[1]);
@@ -116,7 +116,7 @@ void MyWindow::throw_normal_ball()
 	mBall->setVelocity(4, mBallGenerator->mInitVel[1]);
 	mBall->setVelocity(5, mBallGenerator->mInitVel[2]);
 	mWorld->addSkeleton(mBall);	
-	
+
 	this->water_flag = false;
 }
 void MyWindow::throw_water_ball()
@@ -216,17 +216,13 @@ void MyWindow::timeStepping()
 
 	if(this->ballHeadCollision())
 	{
+		mBall->getBodyNode(0)->setExtForce(Eigen::Vector3d(0,15,2));
 		if(water_flag)
 		{
 			if(mCartoonFlag)
 				mController->setAllZero();
 			else
 				mController->setRootZero();
-		}
-		else
-		{
-			mBall->setVelocity(4,2);
-			mBall->setVelocity(5,1.5);
 		}
 	}
 

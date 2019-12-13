@@ -12,7 +12,8 @@ void Throw::throw_target_default(float target_height)
 {
 	float offset_ground = 0.105;
 	float g = 9.81;
-	float jump_height = mMotionGraph->jump_height() + mHubo->getBodyNode("head")->getCOM()[1];
+	float head_offset = 0.05;
+	float jump_height = mMotionGraph->jump_height() + mHubo->getBodyNode("head")->getCOM()[1] + head_offset;
 	// std::cout << jump_height <<std::endl;
 	if(jump_height > target_height){
 		std::cout << "jump_height is " << jump_height <<std::endl;

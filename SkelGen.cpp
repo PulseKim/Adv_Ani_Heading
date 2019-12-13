@@ -310,6 +310,50 @@ SkelGen::freeSphere
 }
 
 
+BodyNode* 
+SkelGen::freeSoftSphere
+(const SkeletonPtr& skel, const std::string& name, double radius, 
+	const Eigen::Vector3d offChild, double mass, const Eigen::Vector3d color)
+{
+
+	FreeJoint::Properties props;
+	props.mName = name;
+	Eigen::Isometry3d T1;
+	T1.setIdentity();	
+	T1.translation() = offChild;
+	props.mT_ChildBodyToJoint = T1;
+
+	SoftBodyNode::UniqueProperties soft_properties;
+
+    // Eigen::Vector3d dims = 2*radius*Eigen::Vector3d::Ones();
+    soft_properties = SoftBodyNodeHelper::makeSphereProperties(radius, 6, 6, mass);
+
+
+    float default_vertex_stiffness = 1000.0;
+    float default_edge_stiffness = 100.0;
+    float default_soft_damping = 5.0;
+
+
+    soft_properties.mKv = default_vertex_stiffness;
+	soft_properties.mKe = default_edge_stiffness;
+	soft_properties.mDampCoeff = default_soft_damping;
+
+	//Joint Parsing
+	SoftBodyNode::Properties body_properties(BodyNode::AspectProperties(name), soft_properties);
+  	SoftBodyNode* bn = skel->createJointAndBodyNodePair<FreeJoint, SoftBodyNode>(nullptr, props, body_properties).second;
+	//Inertia
+	Inertia inertia;
+ 	inertia.setMoment(1e-8*Eigen::Matrix3d::Identity());
+  	inertia.setMass(1e-8);
+  	bn->setInertia(inertia);
+
+	auto visualShapenodes = bn->getShapeNodesWith<VisualAspect>();
+	visualShapenodes[0]->getVisualAspect()->setColor(color);
+	return bn;
+}
+
+
+
 
 
 
