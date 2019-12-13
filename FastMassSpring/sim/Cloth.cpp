@@ -64,7 +64,9 @@ Initialize(FEM::World* world)
 BodyModel::
 BodyModel(	const double &length, const size_t &n_vert_fragments,
 			const double &inner_radius, const double &outer_radius, const size_t &n_circ_fragments)
-:mStretchingStiffness_soft(1E1),mBendingStiffness_soft(2.0),
+//:mStretchingStiffness_soft(1E1),mBendingStiffness_soft(2.0),
+//mStretchingStiffness_hard(1E6),mBendingStiffness_hard(100000.0)
+:mStretchingStiffness_soft(1E2),mBendingStiffness_soft(2.0),
 mStretchingStiffness_hard(1E6),mBendingStiffness_hard(100000.0)
 {
 	//Create mesh here. particles and springs
@@ -103,7 +105,40 @@ mStretchingStiffness_hard(1E6),mBendingStiffness_hard(100000.0)
 		}
 	}
 	
+	//Ring structure
+	for(size_t i = 0 ; i <= n_vert_fragments ; i++)
+	{
+		for(size_t j = 0 ; j < n_circ_fragments ; j++)
+		{
+			//Center to inner rim
+			mConstraints.push_back(new SpringConstraint(mStretchingStiffness_hard,
+														(i * frag_per_circle),			//Center point
+														(i * frag_per_circle) + 1 + j,	//Each point of inner rim
+														inner_radius));
+			
+			//Inner rim
+			mConstraints.push_back(new SpringConstraint(mStretchingStiffness_hard,
+														(i * frag_per_circle) + 1 + j,
+														(i * frag_per_circle) + 1 + ((j + 1) % n_circ_fragments),
+														(inner_radius * 2.0f * 3.141591f) / n_circ_fragments));
+			
+			//Inner rim to outer rim
+			mConstraints.push_back(new SpringConstraint(mStretchingStiffness_hard,
+														(i * frag_per_circle) + 1 + j,
+														(i * frag_per_circle) + 1 + j + n_circ_fragments,
+														outer_radius - inner_radius));
 
+			//Outer rim
+			mConstraints.push_back(new SpringConstraint(mStretchingStiffness_hard,
+														(i * frag_per_circle) + (n_circ_fragments + 1) + j,
+														(i * frag_per_circle) + (n_circ_fragments + 1) + ((j + 1) % n_circ_fragments),
+														(outer_radius * 2.0f * 3.141591f) / n_circ_fragments));
+
+
+		}
+	}
+
+	//Internal structures
 	for(size_t i = 0 ; i < n_vert_fragments ; i++)
 	{
 		//Set spring constraints for central axis
@@ -112,29 +147,34 @@ mStretchingStiffness_hard(1E6),mBendingStiffness_hard(100000.0)
 													(i + 1) * frag_per_circle,
 													length / n_vert_fragments));
 
-		for(size_t j = 0 ; j < n_circ_fragments ; j++)
+		for(size_t j = 1 ; j <= n_circ_fragments ; j++)
 		{
-			//Inner rim
-			mConstraints.push_back(new SpringConstraint(mStretchingStiffness_hard,
-														(i * frag_per_circle),
-														(i * frag_per_circle) + j + 1,
-														inner_radius));
+				//Inner rim interconnect
+				mConstraints.push_back(new SpringConstraint(mStretchingStiffness_hard,
+															j + (i * frag_per_circle),
+															j + ((i + 1) * frag_per_circle),
+															length / n_vert_fragments));
 
-			//Outer rim
-			mConstraints.push_back(new SpringConstraint(mStretchingStiffness_soft,
-														(i * frag_per_circle) + j + 1,
-														(i * frag_per_circle) + j + 1 + n_circ_fragments,
-														outer_radius - inner_radius));
+
+				//Outer rim interconnect
+				mConstraints.push_back(new SpringConstraint(mStretchingStiffness_hard,
+															j + n_circ_fragments + (i * frag_per_circle),
+															j + n_circ_fragments + ((i + 1) * frag_per_circle),
+															length / n_vert_fragments));
+
 		}
 
+
+
 	}
+
 
 	//Set starting point and end point-
 	RefID = 0;
 	RefPosition = Eigen::Vector3d(0, 0, 0);
 	RefPosConstraint = new FEM::AttachmentConstraint(500000, RefID, this -> RefPosition);
 
-	EndID = frag_per_circle * n_vert_fragments;
+	EndID = frag_per_circle * (n_vert_fragments / 2);
 	EndPosition = Eigen::Vector3d(length, 0, 0);
 	EndPosConstraint = new FEM::AttachmentConstraint(500000, EndID, this -> EndPosition);
 
