@@ -80,7 +80,6 @@ void MyWindow::setSkeleton()
 	mBall->setPosition(4, -1.2);
 	// Visual Aspect
 	auto visualShapenodes = mFloor->getBodyNode(0)->getShapeNodesWith<VisualAspect>();
-	// std::cout << visualShapenodes[0]->getVisualAspect()->getColor() << std::endl;s
 	visualShapenodes[0]->getVisualAspect()->setColor(dart::Color::White(0.50));
 }
 
@@ -108,7 +107,7 @@ void MyWindow::throw_normal_ball()
 	float ball_rad = 0.11;
 	SkelGen skel;
 	// skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
-	skel.freeSoftSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
+	skel.freeSoftSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Red());
 	auto last_motion = mMotions[mMotions.size()-1];
 	mBall->setPosition(3, mHubo->getCOM()[0]  + mBallGenerator->mInitPos[0]);
 	mBall->setPosition(4, mBallGenerator->mInitPos[1]);
@@ -127,7 +126,7 @@ void MyWindow::throw_water_ball()
 	mBall = Skeleton::create("ball");
 	float ball_rad = 0.11;
 	SkelGen skel;
-	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Blue());
+	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Red());
 	
 	auto last_motion = mMotions[mMotions.size()-1];
 	mBall->setPosition(3, mHubo->getCOM()[0]  + mBallGenerator->mInitPos[0]);
