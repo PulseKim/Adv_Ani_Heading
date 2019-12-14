@@ -84,7 +84,7 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 		ConstraintParam NewAttachmentParam{	.ID				= 30 + i,
 											.Position		= position,
 											.PosConstraint	= nullptr};
-		LeftShoulderParams.push_back(NewAttachmentParam);
+		LeftArmParams.push_back(NewAttachmentParam);
 
 		mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
 															30 + i - 1,
@@ -104,6 +104,11 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 	{
 		Eigen::Vector3d position = (Neck * (n_short_fragments - i) + RShoulder * i) / n_short_fragments;
 		mParticles.push_back((Neck * (n_short_fragments - i) + RShoulder * i) / n_short_fragments);
+
+		ConstraintParam NewAttachmentParam{	.ID				= 40 + i,
+											.Position		= position,
+											.PosConstraint	= nullptr};
+		RightShoulderParams.push_back(NewAttachmentParam);
 
 		if(i == 1)
 		{
@@ -135,6 +140,10 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 		//Interpolation and add constraint
 		Eigen::Vector3d position = (RShoulder * (n_short_fragments - i) + RAnkle * i) / n_short_fragments;
 		mParticles.push_back((RShoulder * (n_short_fragments - i) + RAnkle * i) / n_short_fragments);
+		ConstraintParam NewAttachmentParam{	.ID				= 50 + i,
+											.Position		= position,
+											.PosConstraint	= nullptr};
+		RightArmParams.push_back(NewAttachmentParam);
 
 		mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
 															50 + i - 1,
@@ -258,10 +267,11 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 	}
 
 
-	//Torso vertices(401 - 640, 641 - 720, 721 - 732)
+	//Torso vertices(401 - 640, 641 - 720)
 
 	SkirtRadius = 2.0f;
-	for(auto it = BodyParams.begin() ; it != BodyParams.end() ; it++)
+	size_t n_rings = 0;
+	for(auto it = BodyParams.begin() ; it + 1 != BodyParams.end() ; it++)
 	{
 
 		Eigen::Vector3d ref_pos = it -> Position;
@@ -272,13 +282,17 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 														0, SkirtRadius * sin((2 * 3.141591f * i) / n_circ_fragments));
 			mParticles.push_back(NewPos);
 
-			//In-out connection
 			double stiffness = it == BodyParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft;
 
-			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
-																ParticleOffset + i,
-																it -> ID,
-																SkirtRadius));
+			//In-out connection
+			if(++n_rings < 15)
+			{
+					mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
+																		ParticleOffset + i,
+																		it -> ID,
+																		SkirtRadius));
+			}
+
 			//Rim
 			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
 																ParticleOffset + i,
@@ -322,13 +336,273 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 
 		ParticleOffset += n_circ_fragments;
 	}
+	std::cout << ParticleOffset << std::endl;
+
+	//Left shoulder vertices: 721-810
+	double ShoulderRadius = 0.5f;
+
+	for(auto it = LeftShoulderParams.begin() ; it != LeftShoulderParams.end() ; it++)
+	{
+		Eigen::Vector3d ref_pos = it -> Position;
+		for(size_t i = 0 ; i < ((n_circ_fragments / 2) + 1) ; i++)
+		{
+			Eigen::Vector3d NewPos =	it -> Position
+										+ Eigen::Vector3d(	0, 
+															ShoulderRadius * sin((2 * 3.141591f * i) / n_circ_fragments),
+															-ShoulderRadius * cos((2 * 3.141591f * i) / n_circ_fragments));
+			mParticles.push_back(NewPos);
+
+			//Rim
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+																it -> ID,
+																ParticleOffset + i,
+																ShoulderRadius));
+
+			if(i == n_circ_fragments / 2)
+			{
+				break;
+			}
+
+			//Internal connection
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+																ParticleOffset + i,
+																ParticleOffset + i + 1,
+																(ShoulderRadius * 2 * 3.141591f) / n_circ_fragments));
+		}
+
+		if(it + 1 == LeftShoulderParams.begin())
+		{
+			ParticleOffset += ((n_circ_fragments / 2) + 1);
+			continue;
+		}
+		
+		for(size_t i = 0 ; i < ((n_circ_fragments / 2) + 1) ; i++)
+		{
+			size_t i0 = ParticleOffset + i;
+			size_t i1 = ParticleOffset + i - ((n_circ_fragments) / 2) + 1;
+
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+		}
+
+		ParticleOffset += ((n_circ_fragments / 2) + 1);
+	}
+
+
+	std::cout << ParticleOffset << std::endl;
+
+	//Right shoulder vertices: 811-900
+	for(auto it = RightShoulderParams.begin() ; it != RightShoulderParams.end() ; it++)
+	{
+		Eigen::Vector3d ref_pos = it -> Position;
+		for(size_t i = 0 ; i < ((n_circ_fragments / 2) + 1) ; i++)
+		{
+			Eigen::Vector3d NewPos =	it -> Position
+										+ Eigen::Vector3d(	0, 
+															ShoulderRadius * sin((2 * 3.141591f * i) / n_circ_fragments),
+															-ShoulderRadius * cos((2 * 3.141591f * i) / n_circ_fragments));
+			mParticles.push_back(NewPos);
+
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+																it -> ID,
+																ParticleOffset + i,
+																ShoulderRadius));
+
+			if(i == n_circ_fragments / 2)
+			{
+				break;
+			}
+
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+																ParticleOffset + i,
+																ParticleOffset + i + 1,
+																(ShoulderRadius * 2 * 3.141591f) / n_circ_fragments));
+		}
+
+		if(it + 1 == LeftShoulderParams.begin())
+		{
+			ParticleOffset += ((n_circ_fragments / 2) + 1);
+			continue;
+		}
+		
+		for(size_t i = 0 ; i < ((n_circ_fragments / 2) + 1) ; i++)
+		{
+			size_t i0 = ParticleOffset + i;
+			size_t i1 = ParticleOffset + i - ((n_circ_fragments) / 2) + 1;
+
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+		}
+
+		ParticleOffset += ((n_circ_fragments / 2) + 1);
+	}
+	std::cout << ParticleOffset << std::endl;
+
+
+	//Connect: Length = ShoulderRadius * 2 * 3.141591f / n_circ_fragments
+
+	size_t TorsoStitchLHS[12] = {706, 707, 708, 710, 711, 712, 714, 715, 716, 718, 719, 720};
+	size_t TorsoStitchRHS[12] = {793, 757, 721, 811, 847, 883, 891, 855, 819, 709, 729, 801};
+
+	for(size_t i = 0 ; i < 12 ; i++)
+	{
+		mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+															TorsoStitchLHS[i],
+															TorsoStitchRHS[i],
+															(ShoulderRadius * 2 * 3.141591f) / n_circ_fragments));
+	}
+
+	//Left arm vertices: 901-1060
+	double ArmRadius = 0.6f;
+
+	for(auto it = LeftArmParams.begin() ; it != LeftArmParams.end() ; it++)
+	{
+		Eigen::Vector3d ref_pos = it -> Position;
+		for(size_t i = 0 ; i < n_circ_fragments ; i++)
+		{
+			Eigen::Vector3d NewPos =	it -> Position
+										+ Eigen::Vector3d(ArmRadius * cos((2 * 3.141591f * i) / n_circ_fragments),
+														0, ArmRadius * sin((2 * 3.141591f * i) / n_circ_fragments));
+			mParticles.push_back(NewPos);
+
+			//In-out connection
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft / 4,
+																ParticleOffset + i,
+																it -> ID,
+																ArmRadius));
+			//Rim
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																ParticleOffset + i,
+																ParticleOffset + ((i + 1) % n_circ_fragments),
+																(ArmRadius * 2 * 3.141591f) / n_circ_fragments));
+		}
+
+		if(it + 1 == LeftArmParams.begin())
+		{
+			ParticleOffset += n_circ_fragments;
+			continue;
+		}
+
+		for(size_t i = 0 ; i < n_circ_fragments ; i++)
+		{
+			size_t i0 = ParticleOffset + i;
+			size_t i1 = i0 - n_circ_fragments;
+
+			//Vertical
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft / 4,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+
+			//TODO: Remove X-shaped and take video (Later)
+			i0 = ParticleOffset - n_circ_fragments + ((i + 1) % n_circ_fragments);
+			i1 = ParticleOffset + i;
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+
+			i0 = ParticleOffset - n_circ_fragments + i;
+			i1 = ParticleOffset + ((i + 1) % n_circ_fragments);
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+		}
+
+		ParticleOffset += n_circ_fragments;
+	}
+	std::cout << ParticleOffset << std::endl;
+
+	//size_t LeftArmStitchLHS[9] = {802, 803, 804, ... 810}
+	size_t LeftArmStitchRHS[9] = {905, 904, 903, 902, 901, 916, 915, 914, 913};
+
+	for(size_t i = 0 ; i < 9 ; i++)
+	{
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft * 4,
+																802 + i,
+																LeftArmStitchRHS[i],
+																(mParticles[802+i] - mParticles[LeftArmStitchRHS[i]]).norm() * 0.7));
+	}
+
+
+	for(auto it = RightArmParams.begin() ; it != RightArmParams.end() ; it++)
+	{
+		Eigen::Vector3d ref_pos = it -> Position;
+		for(size_t i = 0 ; i < n_circ_fragments ; i++)
+		{
+			Eigen::Vector3d NewPos =	it -> Position
+										+ Eigen::Vector3d(ArmRadius * cos((2 * 3.141591f * i) / n_circ_fragments),
+														0, ArmRadius * sin((2 * 3.141591f * i) / n_circ_fragments));
+			mParticles.push_back(NewPos);
+
+			//In-out connection
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft / 4,
+																ParticleOffset + i,
+																it -> ID,
+																ArmRadius));
+			//Rim
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																ParticleOffset + i,
+																ParticleOffset + ((i + 1) % n_circ_fragments),
+																(ArmRadius * 2 * 3.141591f) / n_circ_fragments));
+		}
+
+		if(it + 1 == RightArmParams.begin())
+		{
+			ParticleOffset += n_circ_fragments;
+			continue;
+		}
+
+		for(size_t i = 0 ; i < n_circ_fragments ; i++)
+		{
+			size_t i0 = ParticleOffset + i;
+			size_t i1 = i0 - n_circ_fragments;
+
+			//Vertical
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft / 4,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+
+			//TODO: Remove X-shaped and take video (Later)
+			i0 = ParticleOffset - n_circ_fragments + ((i + 1) % n_circ_fragments);
+			i1 = ParticleOffset + i;
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+
+			i0 = ParticleOffset - n_circ_fragments + i;
+			i1 = ParticleOffset + ((i + 1) % n_circ_fragments);
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+		}
+
+		ParticleOffset += n_circ_fragments;
+	}
+
+	for(size_t i = 0 ; i < 9 ; i++)
+	{
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft * 4,
+																892 + i,
+																1065 + i,
+																(mParticles[892+i] - mParticles[1065+i]).norm() * 0.7));
+	}
+
 
 	//Create world.
 	mSoftWorld = new FEM::World(
 		FEM::IntegrationMethod::PROJECTIVE_DYNAMICS,	//Integration Method
 		FEM::OptimizationMethod::OPTIMIZATION_METHOD_NEWTON,
 		FEM::LinearSolveType::SOLVER_TYPE_LDLT,
-		1.0/100.0,										//time_step
+		1.0/1000.0,										//time_step
 		100, 											//max_iteration	
 		0.99											//damping_coeff
 		);
