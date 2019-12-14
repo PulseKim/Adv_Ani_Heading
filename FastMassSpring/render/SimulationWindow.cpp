@@ -36,10 +36,26 @@ SimulationWindow()
 	//mCloth->Initialize(mSoftWorld);
 
 	//Do things
+	/*
 	mBody = new BodyModel(10.0f, 20, 1.5f, 2.0f, 16);
 	mBody->Initialize(mSoftWorld);
-
 	mSoftWorld->Initialize();
+	*/
+
+	mCloth = new Cloth(	Eigen::Vector3d(0, 0, 0),
+						Eigen::Vector3d(0, 8, 0),
+						Eigen::Vector3d(3, 8, 0),
+						Eigen::Vector3d(3, 4, 0),
+						Eigen::Vector3d(-3, 8, 0),
+						Eigen::Vector3d(-3, 4, 0),
+						Eigen::Vector3d(0, -4, 0));
+
+	mCloth -> getVertices();
+
+	mSoftWorld = mCloth->GetSoftWorld();
+
+
+
 }
 void
 SimulationWindow::
@@ -49,31 +65,12 @@ Display()
 	glClearColor(1, 1, 1, 1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
-	// glEnable(GL_LINE_SMOOTH);
- 	// glEnable(GL_POLYGON_SMOOTH);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);  
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
 	mCamera->Apply();
 	
-	// glDisable(GL_LIGHTING);  
-	// glColor3f(0,0,0);
-	// glLineWidth(0.01);
-	// glBegin(GL_LINES);
-	// for(double x=-10.0;x<=10.0;x+=0.5)
-	// {
-	// 	glVertex3f(x,0.0,-10.0);
-	// 	glVertex3f(x,0.0,10.0);
-	// }
-	// for(double z=-10.0;z<=10.0;z+=0.5)
-	// {
-	// 	glVertex3f(-10.0,0.0,z);
-	// 	glVertex3f(10.0,0.0,z);
-	// }
-	// glEnd();
-	// glEnable(GL_LIGHTING); 
-
 	glColor3f(0,0,0);
     GUI::DrawStringOnScreen(0.8,0.2,std::to_string(mSoftWorld->GetTime()),
     	true,Eigen::Vector3d(0.0,0.0,0.0));
@@ -86,25 +83,6 @@ Display()
 	}
 
 	GUI::DrawPoint(particles.block<3,1>(3*9,0),10.0,Eigen::Vector3d(1,0,0));
-
-	/*
-	const auto& particles = mSoftWorld->mX;
-	const auto& springs = mCloth->GetMesh()->GetSprings();
-
-	for(int i=0; i<particles.size()/3; i++) 
-	{
-		GUI::DrawPoint(particles.block<3,1>(3*i,0),3.0,Eigen::Vector3d(0,0,0));
-	}
-
-	GUI::DrawPoint(particles.block<3,1>(3*9,0),10.0,Eigen::Vector3d(1,0,0));
-
-	for(const auto& s : springs) 
-	{
-		auto p0 = particles.block<3,1>(3*s[0],0);
-		auto p1 = particles.block<3,1>(3*s[1],0);
-		GUI::DrawLine(p0,p1);
-	}
-	*/
 
 	if(mCapture) Screenshot();
 
@@ -194,22 +172,16 @@ SimulationWindow::
 Timer(int value)
 {
 	if(mPlay) {
-
 /*
-		mSoftWorld->RemoveConstraint(mBody->RefPosConstraint);
-		delete mBody->RefPosConstraint;
-		//mBody->RefPosition = Eigen::Vector3d(0, 0, 0);
-		mBody->RefPosition[1] += 0.05f;
-		mBody->RefPosConstraint = new FEM::AttachmentConstraint(500000, mBody->RefID, mBody->RefPosition);
-		mSoftWorld->AddConstraint(mBody->RefPosConstraint);
-
-		mSoftWorld->RemoveConstraint(mBody->EndPosConstraint);
-		delete mBody->EndPosConstraint;
-		//mBody->EndPosition = Eigen::Vector3d(10.0f, 0, 0);
-		mBody->EndPosition[1] += 0.05f;
-		mBody->EndPosConstraint = new FEM::AttachmentConstraint(500000, mBody->EndID, mBody->EndPosition);
-		mSoftWorld->AddConstraint(mBody->EndPosConstraint);
-*/
+		mElapsedTime += 0.001;
+		mCloth -> SetPosition(	Eigen::Vector3d(0, 0	, mElapsedTime * 100),
+								Eigen::Vector3d(0, 8	, mElapsedTime * 100),
+								Eigen::Vector3d(3, 8	, mElapsedTime * 100),
+								Eigen::Vector3d(3, 4	, mElapsedTime * 100),
+								Eigen::Vector3d(-3, 8	, mElapsedTime * 100),
+								Eigen::Vector3d(-3, 4	, mElapsedTime * 100),
+								Eigen::Vector3d(0, -4	, mElapsedTime * 100));
+		*/
 
 
 		// auto start_time = std::chrono::system_clock::now();

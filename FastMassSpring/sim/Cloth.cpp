@@ -2,178 +2,493 @@
 #include <iostream>
 using namespace FEM;
 
-Cloth::
-Cloth()
-:mMesh(),mStretchingStiffness(1E2),mBendingStiffness(20.0)
+Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
+				const Eigen::Vector3d &Neck,
+				const Eigen::Vector3d &LShoulder,
+				const Eigen::Vector3d &LAnkle,
+				const Eigen::Vector3d &RShoulder,
+				const Eigen::Vector3d &RAnkle,
+				const Eigen::Vector3d &SkirtRoot)
 {
 
-}
-void
-Cloth::
-Initialize(FEM::World* world)
-{
-	Eigen::Affine3d T=Eigen::Affine3d::Identity();
-	mMesh = new GridMesh(10,10,10.0,10.0,Eigen::Vector3d(-1.0,1.0,0),T);	
-
-	const auto& particles = mMesh->GetParticles();
-	const auto& springs = mMesh->GetSprings();
-
-	int idx = 0;
-	for(const auto& spr : springs) 
-	{
-		int i0,i1; 
-		Eigen::Vector3d p0,p1;
-
-		i0 = spr[0];
-		i1 = spr[1];
-		p0 = particles[i0];
-		p1 = particles[i1];
-
-		double l0 = (p0-p1).norm();
-
-		mConstraints.push_back(new SpringConstraint(mStretchingStiffness,i0,i1,l0));
-		idx +=1;
-	}
-
-	this->RefPosition = particles[1];
-	this->PosConstraint = new FEM::AttachmentConstraint(500000,1,this->RefPosition);
-	world->AddConstraint(this->PosConstraint);
-
-	//world->AddConstraint(new FEM::AttachmentConstraint(500000,1,particles[1]));
-
-
-	//world->AddConstraint(new FEM::AttachmentConstraint(500000,10*10-1,particles[10*10-1]));
-
-	//world->AddConstraint(new FEM::AttachmentConstraint(500000,1*10-1,particles[1*10-1]));
-	// world->AddConstraint(new FEM::AttachmentConstraint(500000,3*10-1,particles[3*10-1]));
-	// world->AddConstraint(new FEM::AttachmentConstraint(500000,5*10-1,particles[5*10-1]));
-	// world->AddConstraint(new FEM::AttachmentConstraint(500000,7*10-1,particles[7*10-1]));
-	// world->AddConstraint(new FEM::AttachmentConstraint(500000,10*10-1,particles[10*10-1]));
-
-	Eigen::VectorXd p(particles.size()*3);
-	for(int i =0;i<particles.size();i++)
-		p.block<3,1>(i*3,0) = particles[i];
-
-	world->AddBody(p,mConstraints,1.0);
-
-	for(auto& c: mConstraints) {
-		world->AddConstraint(c);
-	}
-}
-
-BodyModel::
-BodyModel(	const double &length, const size_t &n_vert_fragments,
-			const double &inner_radius, const double &outer_radius, const size_t &n_circ_fragments)
-:mStretchingStiffness_soft(1E2),mBendingStiffness_soft(2.0),
-mStretchingStiffness_hard(1E6),mBendingStiffness_hard(100000.0)
-{
-	//size_t frag_per_circle = (n_circ_fragments * 2) + 1;
-	size_t frag_per_circle = (n_circ_fragments) + 1;
-
+	mConstraints.clear();
 	mParticles.clear();
-	for(size_t i = 0 ; i <= n_vert_fragments ; i++)
+	FixedParams.clear();
+
+	//Torso skeleton
+	for(size_t i = 0 ; i <= n_long_fragments ; i++)
 	{
-		double x_offset = (length * i) / n_vert_fragments;
-		//Eigen::Vector3d vert_pos(x_offset, 0, 0);
-		//mParticles.push_back(vert_pos);
+		//Interpolation and add constraint
+		Eigen::Vector3d position = (Pelvis * (n_long_fragments - i) + Neck * i) / n_long_fragments;
+		mParticles.push_back(position);
 
-		mParticles.emplace_back(x_offset, 0, 0);
+		FEM::Constraint *PosConstraint = new FEM::AttachmentConstraint(500000, i, position);
+		ConstraintParam NewAttachmentParam{	.ID				= i,
+											.Position		= position,
+											.PosConstraint	= PosConstraint};
+		BodyParams.push_back(NewAttachmentParam);
 
-		//Internal circle
-		for(size_t j = 0 ; j < n_circ_fragments ; j++)
+		if(!i || i == n_long_fragments)
 		{
-			mParticles.emplace_back(x_offset,
-									inner_radius * cos((((double)j) * 2.0f * 3.141591f) / n_circ_fragments),
-									inner_radius * sin((((double)j) * 2.0f * 3.141591f) / n_circ_fragments));
+				mConstraints.push_back(PosConstraint);
+				FixedParams.push_back(NewAttachmentParam);
+
+				if(!i)
+				{
+					continue;
+				}
 		}
 
+		//Connect with previous one
+		mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+															i - 1,
+															i,
+															(mParticles[i - 1] - mParticles[i]).norm()));
 	}
+
+	//Left shoulder
+	for(size_t i = 1 ; i <= n_short_fragments ; i++)
+	{
+		Eigen::Vector3d position = (Neck * (n_short_fragments - i) + LShoulder * i) / n_short_fragments;
+		mParticles.push_back((Neck * (n_short_fragments - i) + LShoulder * i) / n_short_fragments);
+
+		ConstraintParam NewAttachmentParam{	.ID				= 20 + i,
+											.Position		= position,
+											.PosConstraint	= nullptr};
+		LeftShoulderParams.push_back(NewAttachmentParam);
+
+		mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+															20 + i - 1,
+															20 + i,
+															(mParticles[20 + i - 1] - mParticles[20 + i]).norm()));
+
+
+	}
+
+	FEM::Constraint *PosConstraint = new FEM::AttachmentConstraint(500000, 30, LShoulder);
+	mConstraints.push_back(PosConstraint);
+
+	ConstraintParam NewAttachmentParamLS{	.ID				= 30,
+											.Position		= Eigen::Vector3d(0, 0, 0),
+											.PosConstraint	= PosConstraint};
+	FixedParams.push_back(NewAttachmentParamLS);
+
+
+	//Upper left arm
+	for(size_t i = 1 ; i <= n_short_fragments ; i++)
+	{
+		//Interpolation and add constraint
+		Eigen::Vector3d position = (LShoulder * (n_short_fragments - i) + LAnkle * i) / n_short_fragments;
+		mParticles.push_back((LShoulder * (n_short_fragments - i) + LAnkle * i) / n_short_fragments);
+
+		ConstraintParam NewAttachmentParam{	.ID				= 30 + i,
+											.Position		= position,
+											.PosConstraint	= nullptr};
+		LeftShoulderParams.push_back(NewAttachmentParam);
+
+		mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+															30 + i - 1,
+															30 + i,
+															(mParticles[30 + i - 1] - mParticles[30 + i]).norm()));
+	}
+	PosConstraint = new FEM::AttachmentConstraint(500000, 40, LAnkle);
+	mConstraints.push_back(PosConstraint);
+
+	ConstraintParam NewAttachmentParamLA{	.ID				= 40,
+											.Position		= Eigen::Vector3d(0, 0, 0),
+											.PosConstraint	= PosConstraint};
+	FixedParams.push_back(NewAttachmentParamLA);
+
+	//Right shoulder
+	for(size_t i = 1 ; i <= n_short_fragments ; i++)
+	{
+		Eigen::Vector3d position = (Neck * (n_short_fragments - i) + RShoulder * i) / n_short_fragments;
+		mParticles.push_back((Neck * (n_short_fragments - i) + RShoulder * i) / n_short_fragments);
+
+		if(i == 1)
+		{
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+																20,
+																41,
+																(mParticles[20] - mParticles[41]).norm()));
+			continue;
+		}
+
+		mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+															40 + i - 1,
+															40 + i,
+															(mParticles[40 + i - 1] - mParticles[40 + i]).norm()));
+	}
+
+	//Insert to FixedParams
+	PosConstraint = new FEM::AttachmentConstraint(500000, 50, RShoulder);
+	mConstraints.push_back(PosConstraint);
+
+	ConstraintParam NewAttachmentParamRS{	.ID				= 50,
+											.Position		= Eigen::Vector3d(0, 0, 0),
+											.PosConstraint	= PosConstraint};
+	FixedParams.push_back(NewAttachmentParamRS);
+
+	//Upper right arm
+	for(size_t i = 1 ; i <= n_short_fragments ; i++)
+	{
+		//Interpolation and add constraint
+		Eigen::Vector3d position = (RShoulder * (n_short_fragments - i) + RAnkle * i) / n_short_fragments;
+		mParticles.push_back((RShoulder * (n_short_fragments - i) + RAnkle * i) / n_short_fragments);
+
+		mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+															50 + i - 1,
+															50 + i,
+															(mParticles[50 + i - 1] - mParticles[50 + i]).norm()));
+	}
+	PosConstraint = new FEM::AttachmentConstraint(500000, 60, RAnkle);
+	mConstraints.push_back(PosConstraint);
+
+	ConstraintParam NewAttachmentParamRA{	.ID				= 60,
+											.Position		= Eigen::Vector3d(0, 0, 0),
+											.PosConstraint	= PosConstraint};
+	FixedParams.push_back(NewAttachmentParamRA);
 	
-	//Ring structure
-	for(size_t i = 0 ; i <= n_vert_fragments ; i++)
+	//Pelvis to skirt root
+	for(size_t i = 1 ; i <= n_long_fragments ; i++)
 	{
-		for(size_t j = 0 ; j < n_circ_fragments ; j++)
+		//Interpolation and add constraint
+		Eigen::Vector3d position = (Pelvis * (n_long_fragments - i) + SkirtRoot * i) / n_long_fragments;
+		mParticles.push_back((Pelvis * (n_long_fragments - i) + SkirtRoot * i) / n_long_fragments);
+
+		ConstraintParam NewAttachmentParam{	.ID				= 60 + i,
+											.Position		= position,
+											.PosConstraint	= PosConstraint};
+
+		SkirtRootParams.push_back(NewAttachmentParam);
+
+		if(i == 1)
 		{
-			//Center to inner rim
-			mConstraints.push_back(new SpringConstraint(mStretchingStiffness_hard,
-														(i * frag_per_circle),			//Center point
-														(i * frag_per_circle) + 1 + j,	//Each point of inner rim
-														inner_radius));
-			
-			//Inner rim
-			mConstraints.push_back(new SpringConstraint(mStretchingStiffness_soft,
-														(i * frag_per_circle) + 1 + j,
-														(i * frag_per_circle) + 1 + ((j + 1) % n_circ_fragments),
-														(inner_radius * 2.0f * 3.141591f) / n_circ_fragments));
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+																0,
+																61,
+																(mParticles[61] - mParticles[0]).norm()));
+			continue;
 		}
+
+		mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_hard,
+															60 + i - 1,
+															60 + i,
+															(mParticles[60 + i - 1] - mParticles[60 + i]).norm()));
+
+	}
+	PosConstraint = new FEM::AttachmentConstraint(500000, 80, SkirtRoot);
+	mConstraints.push_back(PosConstraint);
+
+	ConstraintParam NewAttachmentParamSk{	.ID				= 80,
+											.Position		= Eigen::Vector3d(0, 0, 0),
+											.PosConstraint	= PosConstraint};
+	FixedParams.push_back(NewAttachmentParamSk);
+
+	std::cout << mParticles.size() << std::endl;
+	std::cout << FixedParams.size() << std::endl;
+
+	//Create actual skirt vertices and constraints
+	//Particle 81-400
+
+	size_t ParticleOffset = 81;
+	float SkirtRadius = 2.1f;
+	for(auto it = SkirtRootParams.begin() ; it != SkirtRootParams.end() ; it++)
+	{
+
+		Eigen::Vector3d ref_pos = it -> Position;
+		for(size_t i = 0 ; i < n_circ_fragments ; i++)
+		{
+			Eigen::Vector3d NewPos =	it -> Position
+										+ Eigen::Vector3d(SkirtRadius * cos((2 * 3.141591f * i) / n_circ_fragments),
+														0, SkirtRadius * sin((2 * 3.141591f * i) / n_circ_fragments));
+			mParticles.push_back(NewPos);
+
+			//In-out connection
+			double stiffness = it == SkirtRootParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft;
+
+			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
+																ParticleOffset + i,
+																it -> ID,
+																SkirtRadius));
+			//Rim
+			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
+																ParticleOffset + i,
+																ParticleOffset + ((i + 1) % n_circ_fragments),
+																(SkirtRadius * 2 * 3.141591f) / n_circ_fragments));
+		}
+
+		if(it == SkirtRootParams.begin())
+		{
+			ParticleOffset += n_circ_fragments;
+			SkirtRadius += 0.1f;
+			continue;
+		}
+
+		//Vertical interconnection
+		for(size_t i = 0 ; i < n_circ_fragments ; i++)
+		{
+			size_t i0 = ParticleOffset + i;
+			size_t i1 = i0 - n_circ_fragments;
+
+			//Vertical
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+
+			//TODO: Remove X-shaped and take video (Later)
+			i0 = ParticleOffset - n_circ_fragments + ((i + 1) % n_circ_fragments);
+			i1 = ParticleOffset + i;
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+
+			i0 = ParticleOffset - n_circ_fragments + i;
+			i1 = ParticleOffset + ((i + 1) % n_circ_fragments);
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+		}
+
+		ParticleOffset += n_circ_fragments;
+		SkirtRadius += 0.1f;
 	}
 
-	//Internal structures
-	for(size_t i = 0 ; i < n_vert_fragments ; i++)
+
+	//Torso vertices(401 - 640, 641 - 720, 721 - 732)
+
+	SkirtRadius = 2.0f;
+	for(auto it = BodyParams.begin() ; it != BodyParams.end() ; it++)
 	{
-		//Set spring constraints for central axis
-		mConstraints.push_back(new SpringConstraint(mStretchingStiffness_hard,
-													i * frag_per_circle,
-													(i + 1) * frag_per_circle,
-													length / n_vert_fragments));
 
-		//Set fixed points
-		size_t ID_						= i * frag_per_circle;
-		Eigen::Vector3d Position_		= Eigen::Vector3d((length * i) / n_vert_fragments, 0, 0);
-		FEM::Constraint *PosConstraint_	= new FEM::AttachmentConstraint(500000, ID_, Position_);
-
-/*
-		LeftArmParams.emplace_back(	.ID				= ID_,
-									.Position		= Position_,
-									.PosConstraint	= PosConstraint_);
-*/
-		LeftArmParams.emplace_back(ID_, Position_, PosConstraint_);
-									
-		
-
-		for(size_t j = 1 ; j <= n_circ_fragments ; j++)
+		Eigen::Vector3d ref_pos = it -> Position;
+		for(size_t i = 0 ; i < n_circ_fragments ; i++)
 		{
-				//Inner rim interconnect
-				mConstraints.push_back(new SpringConstraint(mStretchingStiffness_soft,
-															j + (i * frag_per_circle),
-															j + ((i + 1) * frag_per_circle),
-															length / n_vert_fragments));
+			Eigen::Vector3d NewPos =	it -> Position
+										+ Eigen::Vector3d(SkirtRadius * cos((2 * 3.141591f * i) / n_circ_fragments),
+														0, SkirtRadius * sin((2 * 3.141591f * i) / n_circ_fragments));
+			mParticles.push_back(NewPos);
+
+			//In-out connection
+			double stiffness = it == BodyParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft;
+
+			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
+																ParticleOffset + i,
+																it -> ID,
+																SkirtRadius));
+			//Rim
+			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
+																ParticleOffset + i,
+																ParticleOffset + ((i + 1) % n_circ_fragments),
+																(SkirtRadius * 2 * 3.141591f) / n_circ_fragments));
 		}
+
+		if(it == SkirtRootParams.begin())
+		{
+			ParticleOffset += n_circ_fragments;
+			continue;
+		}
+
+		//Vertical interconnection
+		for(size_t i = 0 ; i < n_circ_fragments ; i++)
+		{
+			size_t i0 = ParticleOffset + i;
+			size_t i1 = i0 - n_circ_fragments;
+
+			//Vertical
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+
+			//TODO: Remove X-shaped and take video (Later)
+			i0 = ParticleOffset - n_circ_fragments + ((i + 1) % n_circ_fragments);
+			i1 = ParticleOffset + i;
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+
+			i0 = ParticleOffset - n_circ_fragments + i;
+			i1 = ParticleOffset + ((i + 1) % n_circ_fragments);
+			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft,
+																i0,
+																i1,
+																(mParticles[i1] - mParticles[i0]).norm()));
+		}
+
+		ParticleOffset += n_circ_fragments;
 	}
 
-	//Global variables for next body part.
-	n_refs += frag_per_circle * (n_vert_fragments + 1);
+	//Create world.
+	mSoftWorld = new FEM::World(
+		FEM::IntegrationMethod::PROJECTIVE_DYNAMICS,	//Integration Method
+		FEM::OptimizationMethod::OPTIMIZATION_METHOD_NEWTON,
+		FEM::LinearSolveType::SOLVER_TYPE_LDLT,
+		1.0/100.0,										//time_step
+		100, 											//max_iteration	
+		0.99											//damping_coeff
+		);
 
-
-	//Set starting point and end point-
-	RefID = 0;
-	RefPosition = Eigen::Vector3d(0, 0, 0);
-	RefPosConstraint = new FEM::AttachmentConstraint(500000, RefID, this -> RefPosition);
-
-	EndID = frag_per_circle * (n_vert_fragments);
-	EndPosition = Eigen::Vector3d(length, 0, 0);
-	EndPosConstraint = new FEM::AttachmentConstraint(500000, EndID, this -> EndPosition);
-
-}
-
-void
-BodyModel::
-Initialize(FEM::World* world)
-
-{
-	
-	//Add contraints to world
+	//Pass vertices to world
 	Eigen::VectorXd p(mParticles.size()*3);
 	for(int i =0;i<mParticles.size();i++)
 		p.block<3,1>(i*3,0) = mParticles[i];
 
-	world->AddBody(p,mConstraints,1.0);
+	mSoftWorld->AddBody(p,mConstraints,1.0);
 
+
+	//Pass constraints to world
 	for(auto& c: mConstraints) {
-		world->AddConstraint(c);
+		mSoftWorld->AddConstraint(c);
 	}
 
-	world->AddConstraint(RefPosConstraint);
-	world->AddConstraint(EndPosConstraint);
+	//Initialize our world
+	mSoftWorld->Initialize();
+}
+
+
+void Cloth::SetPosition(	const Eigen::Vector3d &Pelvis,
+							const Eigen::Vector3d &Neck,
+							const Eigen::Vector3d &LShoulder,
+							const Eigen::Vector3d &LAnkle,
+							const Eigen::Vector3d &RShoulder,
+							const Eigen::Vector3d &RAnkle,
+							const Eigen::Vector3d &SkirtRoot)
+{
+	for(auto it = FixedParams.begin() ; it != FixedParams.end() ; it++)
+	{
+		mSoftWorld->RemoveConstraint(it -> PosConstraint);
+		delete it -> PosConstraint;
+	}
+
+	FixedParams[0].Position = Pelvis;
+	FixedParams[1].Position = Neck;
+	FixedParams[2].Position = LShoulder;
+	FixedParams[3].Position = LAnkle;
+	FixedParams[4].Position = RShoulder;
+	FixedParams[5].Position = RAnkle;
+	FixedParams[6].Position = SkirtRoot;
+
+	for(auto it = FixedParams.begin() ; it != FixedParams.end() ; it++)
+	{
+		it -> PosConstraint = new FEM::AttachmentConstraint(500000, it -> ID, it -> Position);
+		mSoftWorld -> AddConstraint(it -> PosConstraint);
+	}
+}
+
+void Cloth::TimeStep()
+{
+	mSoftWorld->TimeStepping();
+}
+
+FEM::World *Cloth::GetSoftWorld()
+{
+	return this -> mSoftWorld;
+}
+
+const std::vector<Eigen::Vector3d> Cloth::getVertices()
+{
+	const Eigen::VectorXd &particles = this->mSoftWorld->GetPositions();
+
+	std::vector<Eigen::Vector3d> ret;
+
+	//Lower skirt: 81-384
+	size_t ParticleOffset = 81;
+	for(size_t i = 0 ; i < n_long_fragments - 1 ; i++)
+	{
+		for(size_t j = 0 ; j < n_circ_fragments - 1 ; j++)
+		{
+			ret.emplace_back(	particles[ParticleOffset * 3 + 0],
+								particles[ParticleOffset * 3 + 1],
+								particles[ParticleOffset * 3 + 2]);	//81
+
+			ret.emplace_back(	particles[(ParticleOffset + 1) * 3 + 0],
+								particles[(ParticleOffset + 1) * 3 + 1],
+								particles[(ParticleOffset + 1) * 3 + 2]);	//82
+
+			ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments + 1) * 3 + 0],
+								particles[(ParticleOffset + n_circ_fragments + 1) * 3 + 1],
+								particles[(ParticleOffset + n_circ_fragments + 1) * 3 + 2]);	//98
+
+			ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments) * 3 + 0],
+								particles[(ParticleOffset + n_circ_fragments) * 3 + 1],
+								particles[(ParticleOffset + n_circ_fragments) * 3 + 2]);		//97
+
+			ParticleOffset++;
+
+		}
+
+		ret.emplace_back(	particles[ParticleOffset * 3 + 0],
+							particles[ParticleOffset * 3 + 1],
+							particles[ParticleOffset * 3 + 2]);
+
+		ret.emplace_back(	particles[(ParticleOffset - n_circ_fragments + 1) * 3 + 0],
+							particles[(ParticleOffset - n_circ_fragments + 1) * 3 + 1],
+							particles[(ParticleOffset - n_circ_fragments + 1) * 3 + 2]);
+
+		ret.emplace_back(	particles[(ParticleOffset + 1) * 3 + 0],
+							particles[(ParticleOffset + 1) * 3 + 1],
+							particles[(ParticleOffset + 1) * 3 + 2]);
+
+		ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments) * 3 + 0],
+							particles[(ParticleOffset + n_circ_fragments) * 3 + 1],
+							particles[(ParticleOffset + n_circ_fragments) * 3 + 2]);
+
+		ParticleOffset++;
+		
+	}
+
+
+	//Torso: 401-720
+	ParticleOffset = 401;
+	for(size_t i = 0 ; i < n_long_fragments ; i++)
+	{
+		for(size_t j = 0 ; j < n_circ_fragments - 1 ; j++)
+		{
+			ret.emplace_back(	particles[ParticleOffset * 3 + 0],
+								particles[ParticleOffset * 3 + 1],
+								particles[ParticleOffset * 3 + 2]);	//81
+
+			ret.emplace_back(	particles[(ParticleOffset + 1) * 3 + 0],
+								particles[(ParticleOffset + 1) * 3 + 1],
+								particles[(ParticleOffset + 1) * 3 + 2]);	//82
+
+			ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments + 1) * 3 + 0],
+								particles[(ParticleOffset + n_circ_fragments + 1) * 3 + 1],
+								particles[(ParticleOffset + n_circ_fragments + 1) * 3 + 2]);	//98
+
+			ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments) * 3 + 0],
+								particles[(ParticleOffset + n_circ_fragments) * 3 + 1],
+								particles[(ParticleOffset + n_circ_fragments) * 3 + 2]);		//97
+
+			ParticleOffset++;
+
+		}
+
+		ret.emplace_back(	particles[ParticleOffset * 3 + 0],
+							particles[ParticleOffset * 3 + 1],
+							particles[ParticleOffset * 3 + 2]);
+
+		ret.emplace_back(	particles[(ParticleOffset - n_circ_fragments + 1) * 3 + 0],
+							particles[(ParticleOffset - n_circ_fragments + 1) * 3 + 1],
+							particles[(ParticleOffset - n_circ_fragments + 1) * 3 + 2]);
+
+		ret.emplace_back(	particles[(ParticleOffset + 1) * 3 + 0],
+							particles[(ParticleOffset + 1) * 3 + 1],
+							particles[(ParticleOffset + 1) * 3 + 2]);
+
+		ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments) * 3 + 0],
+							particles[(ParticleOffset + n_circ_fragments) * 3 + 1],
+							particles[(ParticleOffset + n_circ_fragments) * 3 + 2]);
+
+		ParticleOffset++;
+		
+	}
+
+	return ret;
 
 }
