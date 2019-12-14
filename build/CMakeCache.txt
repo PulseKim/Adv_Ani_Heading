@@ -514,7 +514,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 DART_DEFINITIONS:INTERNAL=
 DART_INCLUDE_DIRS:INTERNAL=/usr/local/include
-DART_LIBRARIES:INTERNAL=dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart
+DART_LIBRARIES:INTERNAL=dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart
 //Boost min version requirement
 DART_MIN_BOOST_VERSION:INTERNAL=1.58.0
 DART_collision-bullet_DEFINITIONS:INTERNAL=
@@ -543,7 +543,7 @@ DART_optimizer-ipopt_FOUND:INTERNAL=TRUE
 DART_optimizer-ipopt_INCLUDE_DIRS:INTERNAL=
 DART_optimizer-ipopt_LIBRARIES:INTERNAL=dart-optimizer-ipopt
 //Details about finding DART
-FIND_PACKAGE_MESSAGE_DETAILS_DART:INTERNAL=[/usr/local/include][dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart;dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart][cfound components:  gui optimizer-ipopt collision-bullet collision-ode dart ][v()]
+FIND_PACKAGE_MESSAGE_DETAILS_DART:INTERNAL=[/usr/local/include][dart-gui;dart-optimizer-ipopt;dart-collision-bullet;dart-collision-ode;dart][cfound components:  gui optimizer-ipopt collision-bullet collision-ode dart ][v()]
 //Details about finding GLUT
 FIND_PACKAGE_MESSAGE_DETAILS_GLUT:INTERNAL=[/usr/lib/x86_64-linux-gnu/libglut.so][/usr/include][v()]
 //Details about finding OpenGL

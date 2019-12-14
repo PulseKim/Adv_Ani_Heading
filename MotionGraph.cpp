@@ -25,6 +25,9 @@ std::vector<Eigen::VectorXd> MotionGraph::walk_then_jump()
 	WalkJump.insert(WalkJump.end(), mWalk.begin(), mWalk.end());
 	WalkJump.insert(WalkJump.end(), interpolate.begin(), interpolate.end());
 	WalkJump.insert(WalkJump.end(), aligned_jump.begin(), aligned_jump.end());
+	this -> jump_height();
+	mJumpTime += mWalk.size();
+	mJumpTime += interpolate.size();
 
 	return WalkJump;
 }

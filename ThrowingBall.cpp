@@ -12,13 +12,10 @@ void Throw::throw_target_default(float target_height)
 {
 	float offset_ground = 0.105;
 	float g = 9.81;
-	float head_offset = 0.05;
+	float head_offset = -0.01;
 	float jump_height = mMotionGraph->jump_height() + mHubo->getBodyNode("head")->getCOM()[1] + head_offset;
 	// std::cout << jump_height <<std::endl;
-	if(jump_height > target_height){
-		std::cout << "jump_height is " << jump_height <<std::endl;
-		std::cerr << "Expected ball height higher than jump height" << std::endl;
-	}
+
 	float init_vel_y = sqrt(2 * g * (target_height- mStartY));
 	mInitVel[0] = 0;
 	mInitVel[1] = init_vel_y;

@@ -68,7 +68,7 @@ void MyWindow::initSkeleton()
 	mBall = Skeleton::create("ball");
 	float ball_rad = 0.11;
 	SkelGen skel;
-	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Blue());
+	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Red());
 }
 
 void MyWindow::setSkeleton()
@@ -76,8 +76,9 @@ void MyWindow::setSkeleton()
 	Eigen::VectorXd default_pose = mHubo->getPositions();
 	default_pose[4] = 0.745;
 	mHubo->setPositions(default_pose);
-	mBall->setPosition(3, 0.6);
-	mBall->setPosition(4, -1.2);
+	mBall->setPosition(3, 0.0);
+	mBall->setPosition(4, 0.5);
+	mBall->setPosition(5, 30.0);
 	// Visual Aspect
 	auto visualShapenodes = mFloor->getBodyNode(0)->getShapeNodesWith<VisualAspect>();
 	visualShapenodes[0]->getVisualAspect()->setColor(dart::Color::White(0.50));
@@ -108,10 +109,10 @@ void MyWindow::throw_normal_ball()
 	SkelGen skel;
 	// skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Blue());
 	skel.freeSoftSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 0.1, dart::Color::Red());
-	auto last_motion = mMotions[mMotions.size()-1];
-	mBall->setPosition(3, mHubo->getCOM()[0]  + mBallGenerator->mInitPos[0]);
+	auto last_motion =  mCurrentMotionblender->root_aligned_pose(mMotions[mMotions.size()-1]);
+	mBall->setPosition(3, last_motion[3]  + mBallGenerator->mInitPos[0]);
 	mBall->setPosition(4, mBallGenerator->mInitPos[1]);
-	mBall->setPosition(5, mHubo->getCOM()[2] + mBallGenerator->mInitPos[2]);
+	mBall->setPosition(5, last_motion[5] + mBallGenerator->mInitPos[2]);
 	mBall->setVelocity(3, mBallGenerator->mInitVel[0]);
 	mBall->setVelocity(4, mBallGenerator->mInitVel[1]);
 	mBall->setVelocity(5, mBallGenerator->mInitVel[2]);
@@ -127,11 +128,10 @@ void MyWindow::throw_water_ball()
 	float ball_rad = 0.11;
 	SkelGen skel;
 	skel.freeSphere(mBall, "ball", ball_rad, Eigen::Vector3d(0,0, 0), 1.0, dart::Color::Red());
-	
-	auto last_motion = mMotions[mMotions.size()-1];
-	mBall->setPosition(3, mHubo->getCOM()[0]  + mBallGenerator->mInitPos[0]);
+	auto last_motion =  mCurrentMotionblender->root_aligned_pose(mMotions[mMotions.size()-1]);
+	mBall->setPosition(3, last_motion[3]  + mBallGenerator->mInitPos[0]);
 	mBall->setPosition(4, mBallGenerator->mInitPos[1]);
-	mBall->setPosition(5, mHubo->getCOM()[2] + mBallGenerator->mInitPos[2]);
+	mBall->setPosition(5, last_motion[5] + mBallGenerator->mInitPos[2]);
 	mBall->setVelocity(3, mBallGenerator->mInitVel[0]);
 	mBall->setVelocity(4, mBallGenerator->mInitVel[1]);
 	mBall->setVelocity(5, mBallGenerator->mInitVel[2]);	
@@ -183,10 +183,18 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 		cnt = 0;
 		mMotions = mMotionGraph-> run_then_jump();
 		this -> motionblend_init();
+		mBallGenerator->throw_target_default(5.0);
+		mBallGenTime = mBallGenerator->mTimeStep * 1000;
+		bvh_flag = true;
+		break;
+		case 's':
+		cnt = 0;
+		mMotions = mMotionGraph-> walk_then_jump();
+		this -> motionblend_init();
 		mBallGenerator->throw_target_default(3.0);
 		mBallGenTime = mBallGenerator->mTimeStep * 1000;
 		bvh_flag = true;
-
+		break;
 		default:
 		SimWindow::keyboard(key, x, y);
 	}	
