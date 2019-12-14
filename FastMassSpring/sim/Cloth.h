@@ -31,10 +31,14 @@ public:
 	BodyModel(	const double &length, const size_t &n_vert_fragments,
 				const double &inner_radius, const double &outer_radius, const size_t &n_circ_fragments);
 	void Initialize(FEM::World* world);
-	//void SetMesh();
-	//FEM::Mesh* GetMesh() {return mMesh;};
+
+	void SetLeftArmParams(Eigen::Vector3d LeftShoulderJoint, Eigen::Vector3d LeftElbowJoint);
+	void SetRightArmParams(Eigen::Vector3d RightShoulderJoint, Eigen::Vector3d RightElbowJoint);
+	void SetBodyParams(Eigen::Vector3d NeckJoint, Eigen::Vector3d PelvisJoint);
+
 
 	//Added for movement
+	/*
 	size_t												RefID;
 	Eigen::Vector3d										RefPosition;
 	FEM::Constraint*									RefPosConstraint;
@@ -42,11 +46,10 @@ public:
 	size_t												EndID;
 	Eigen::Vector3d										EndPosition;
 	FEM::Constraint*									EndPosConstraint;
+	*/
 
 private:
 	std::vector<FEM::Constraint*>						mConstraints;
-	//FEM::Mesh*											mMesh;
-
 	std::vector<Eigen::Vector3d>						mParticles;
 	std::vector<Eigen::Vector2d>						mSprings;
 
@@ -56,13 +59,32 @@ private:
 	double 												mStretchingStiffness_hard;
 	double 												mBendingStiffness_hard;
 
-/*
-	double												length;
-	size_t												n_vert_fragments;
+	//Created for movement
+	typedef struct
+	{
+		size_t											ID;
+		Eigen::Vector3d									Position;
+		FEM::Constraint*								PosConstraint;
+	}ConstraintParam;
 
-	double												inner_radius;
-*/
-	
+	//Endoskeleton (?) descriptors
+	std::vector<ConstraintParam>						LeftArmParams;
+	std::vector<ConstraintParam>						LeftShoulderParams;
+
+	std::vector<ConstraintParam>						RightArmParams;
+	std::vector<ConstraintParam>						RightShoulderParams;
+
+	std::vector<ConstraintParam>						BodyParams;
+	size_t												n_refs = 0;
+
+	size_t												RefID;
+	Eigen::Vector3d										RefPosition;
+	FEM::Constraint*									RefPosConstraint;
+
+	size_t												EndID;
+	Eigen::Vector3d										EndPosition;
+	FEM::Constraint*									EndPosConstraint;
+
 };
 
 #endif

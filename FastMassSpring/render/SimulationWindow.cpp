@@ -195,16 +195,7 @@ Timer(int value)
 {
 	if(mPlay) {
 
-		//Added for movement
-		/*
-		mSoftWorld->RemoveConstraint(mCloth->PosConstraint);
-		delete mCloth->PosConstraint;
-
-		mCloth->RefPosition[1] += 0.05f;
-		mCloth->PosConstraint=new FEM::AttachmentConstraint(500000,1,mCloth->RefPosition);
-		mSoftWorld->AddConstraint(mCloth->PosConstraint);
-		*/
-
+/*
 		mSoftWorld->RemoveConstraint(mBody->RefPosConstraint);
 		delete mBody->RefPosConstraint;
 		//mBody->RefPosition = Eigen::Vector3d(0, 0, 0);
@@ -218,7 +209,7 @@ Timer(int value)
 		mBody->EndPosition[1] += 0.05f;
 		mBody->EndPosConstraint = new FEM::AttachmentConstraint(500000, mBody->EndID, mBody->EndPosition);
 		mSoftWorld->AddConstraint(mBody->EndPosConstraint);
-
+*/
 
 
 		// auto start_time = std::chrono::system_clock::now();
