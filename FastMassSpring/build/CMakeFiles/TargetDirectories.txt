@@ -1,0 +1,11 @@
+/home/sonic/Projects/Animation Project/FastMassSpring/build/CMakeFiles/rebuild_cache.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/CMakeFiles/edit_cache.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/sim/CMakeFiles/rebuild_cache.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/sim/CMakeFiles/sim.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/sim/CMakeFiles/edit_cache.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/sim/fem/CMakeFiles/rebuild_cache.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/sim/fem/CMakeFiles/fem.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/sim/fem/CMakeFiles/edit_cache.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/render/CMakeFiles/rebuild_cache.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/render/CMakeFiles/render.dir
+/home/sonic/Projects/Animation Project/FastMassSpring/build/render/CMakeFiles/edit_cache.dir

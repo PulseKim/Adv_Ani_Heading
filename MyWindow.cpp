@@ -16,6 +16,7 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 }
 
 
+//Initiation functions that initailize Parameter, Skeleton and world.
 void MyWindow::initParameters()
 {
 	mWorld->setGravity(Eigen::Vector3d(0, -9.81, 0));
@@ -193,8 +194,11 @@ void MyWindow::keyboard(unsigned char key, int x, int y)
 }
 
 
+// Simulation Time Stepping Function
+// This function is called every single step.
 void MyWindow::timeStepping()
 {
+	//  BVH Following STep
 	if(bvh_flag)
 	{
 		Eigen::VectorXd blend_current = mCurrentMotionblender->root_aligned_pose(mMotions[cnt]);
@@ -214,6 +218,7 @@ void MyWindow::timeStepping()
 		}
 	}
 
+	// Header, Exert force to a ball.
 	if(this->ballHeadCollision())
 	{
 		mBall->getBodyNode(0)->setExtForce(Eigen::Vector3d(0,15,2));
@@ -226,16 +231,19 @@ void MyWindow::timeStepping()
 		}
 	}
 
+	// PD_Control if it is possible
 	if(PD_flag)
 	{
 		mController->clearForces();
 		mController->addSPDForces();
 	}
 
+	// Override timestepping from default dartsim world
 	SimWindow::timeStepping();
 
 }
 
+// Drawing Function. Every SImWindow TimeStepping function calls this draw function
 void MyWindow::draw()
 {
 	glDisable(GL_LIGHTING);
@@ -245,12 +253,9 @@ void MyWindow::draw()
 		if (mPlayFrame < mWorld->getRecording()->getNumFrames()) {
 			std::size_t nSkels = mWorld->getNumSkeletons();
 			for (std::size_t i = 0; i < nSkels; i++) {
-	        // std::size_t start = mWorld->getIndex(i);
-	        // std::size_t size = mWorld->getSkeleton(i)->getNumDofs();
 				mWorld->getSkeleton(i)->setPositions(mWorld->getRecording()->getConfig(mPlayFrame, i));
 			}	      
 			if (mShowMarkers) {
-	        // std::size_t sumDofs = mWorld->getIndex(nSkels);
 				int nContact = mWorld->getRecording()->getNumContacts(mPlayFrame);
 				for (int i = 0; i < nContact; i++) {
 					Eigen::Vector3d v = mWorld->getRecording()->getContactPoint(mPlayFrame, i);
@@ -289,14 +294,17 @@ void MyWindow::draw()
 		}
 	}
 
-	// this->drawNormals();
-	// glDisable(GL_LIGHTING);
-	// //Implement 2D factors inside here
-	// this->drawFrame();
+	glDisable(GL_LIGHTING);
+	// Implement 2D factors inside here
+
+
 	glEnable(GL_LIGHTING);
+	// Implement 3D factors inside here
+
+	// Draw rest world components
 	drawWorld();
 
-	  // display the frame count in 2D text
+	// display the frame count in 2D text
 	char buff[64];
 	if (!mSimulating)
 	#ifdef _WIN32
@@ -315,35 +323,3 @@ void MyWindow::draw()
 	drawStringOnScreen(0.02f, 0.02f, frame);
 	glEnable(GL_LIGHTING);
 }
-
-// void MyWindow::drawNormals()
-// {
-// 	glEnable(GL_LIGHTING);
-// 	this->showDirection(true, Eigen::Vector3d(0,0.15,0), Eigen::Vector3d(0,-0.1,0));
-// }
-
-// Eigen::VectorXd MyWindow::ForwardKinematicsMovement(int current_idx, int total_steps, const Eigen::VectorXd original, const Eigen::VectorXd target)
-// {
-// 	Eigen::VectorXd pose = original;
-// 	for(int j = 0 ; j < target.size(); ++j){
-// 		pose[j] = original[j] + (target[j] - original[j]) * current_idx / total_steps;
-// 	}
-// 	return pose;
-// }
-
-
-// void MyWindow::drawFrame()
-// {
-// 	dart::dynamics::Frame *hand_frame = mHand->getBodyNode("patch0");
-// 	Eigen::Matrix3d rot = hand_frame->getWorldTransform().rotation();
-// 	Eigen::Vector3d trans = hand_frame->getWorldTransform().translation();
-// 	glLineWidth(3.0);
-// 	for(int i = 0; i < 3; i++){
-// 		Eigen::Vector3d current_axis = rot.col(i).normalized() * 0.1;
-// 		glColor3f(0.0,i * 0.5,0.0);
-// 		glBegin(GL_LINES);
-// 		glVertex3f(trans[0], trans[1], trans[2]);
-// 		glVertex3f(trans[0] + current_axis[0], trans[1] + current_axis[1], trans[2] + current_axis[2]);
-// 		glEnd();
-// 	}
-// }
