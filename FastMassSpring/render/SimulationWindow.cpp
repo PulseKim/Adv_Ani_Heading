@@ -23,16 +23,6 @@ SimulationWindow()
 	mCurFrame = 0;
 	mDisplayTimeout = 33;
 	mElapsedTime = 0.0;
-/*
-	mSoftWorld = new FEM::World(
-		FEM::IntegrationMethod::PROJECTIVE_DYNAMICS,	//Integration Method
-		FEM::OptimizationMethod::OPTIMIZATION_METHOD_NEWTON,
-		FEM::LinearSolveType::SOLVER_TYPE_LDLT,
-		1.0/100.0,										//time_step
-		100, 											//max_iteration	
-		0.99											//damping_coeff
-		);
-	*/
 
 	//Do things
 	mCloth = new Cloth(	Eigen::Vector3d(0,	 	0.75f,	0),
@@ -162,23 +152,16 @@ SimulationWindow::
 Timer(int value)
 {
 	if(mPlay) {
-/*
 		mElapsedTime += 0.001;
-		mCloth -> SetPosition(	Eigen::Vector3d(0, 0	, mElapsedTime * 100),
-								Eigen::Vector3d(0, 8	, mElapsedTime * 100),
-								Eigen::Vector3d(3, 8	, mElapsedTime * 100),
-								Eigen::Vector3d(3, 4	, mElapsedTime * 100),
-								Eigen::Vector3d(-3, 8	, mElapsedTime * 100),
-								Eigen::Vector3d(-3, 4	, mElapsedTime * 100),
-								Eigen::Vector3d(0, -4	, mElapsedTime * 100));
-		*/
+		mCloth -> SetPosition(	Eigen::Vector3d(mElapsedTime + 0,	 	0.75f,	0),
+								Eigen::Vector3d(mElapsedTime + 0,	 	1.3f,	-0.05f),
+								Eigen::Vector3d(mElapsedTime + 0.17f,  1.3f,	-0.05f),
+								Eigen::Vector3d(mElapsedTime + 0.17f,  1.0f,	-0.05f),
+								Eigen::Vector3d(mElapsedTime + -0.17f, 1.3f,	-0.05f),
+								Eigen::Vector3d(mElapsedTime + -0.17f, 1.0f,	-0.05f),
+								Eigen::Vector3d(mElapsedTime + 0, 		0.25f,	0));
 
-
-		// auto start_time = std::chrono::system_clock::now();
 		mSoftWorld->TimeStepping();
-		// auto end_time = std::chrono::system_clock::now();
-		// std::chrono::duration<double> elapsed_seconds = end_time-start_time;
-		// std::cout << "time: " << elapsed_seconds.count() << "s" <<std::endl;
 	}
 	glutTimerFunc(mDisplayTimeout, TimerEvent,1);
 	glutPostRedisplay();

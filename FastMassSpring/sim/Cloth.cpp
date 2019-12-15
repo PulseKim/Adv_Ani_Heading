@@ -280,7 +280,7 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 														0, TorsoRadius * sin((2 * 3.141591f * i) / n_circ_fragments));
 			mParticles.push_back(NewPos);
 
-			double stiffness = it == BodyParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft;
+			double stiffness = it == BodyParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft * 10;
 
 			//In-out connection
 			if(++n_rings < 15)
@@ -596,7 +596,7 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 		FEM::IntegrationMethod::PROJECTIVE_DYNAMICS,	//Integration Method
 		FEM::OptimizationMethod::OPTIMIZATION_METHOD_NEWTON,
 		FEM::LinearSolveType::SOLVER_TYPE_LDLT,
-		1.0/1000.0,										//time_step
+		TimeStepSize,									//time_step
 		100, 											//max_iteration	
 		0.99											//damping_coeff
 		);
@@ -655,6 +655,7 @@ Cloth::~Cloth()
 
 void Cloth::TimeStep()
 {
+	std::cout << "Step\n";
 	mSoftWorld->TimeStepping();
 }
 
@@ -677,6 +678,15 @@ const std::vector<Eigen::Vector3d> Cloth::getVertices()
 	const Eigen::VectorXd &particles = this->mSoftWorld->GetPositions();
 
 	std::vector<Eigen::Vector3d> ret;
+/*
+	for(size_t i = 81 ; i < particles.size() ; i++)
+	{
+			ret.emplace_back(	particles[i * 3 + 0],
+								particles[i * 3 + 1],
+								particles[i * 3 + 2]);	//81
+	}
+	return ret;
+	*/
 
 	//Lower skirt: 81-384
 	size_t ParticleOffset = 81;
