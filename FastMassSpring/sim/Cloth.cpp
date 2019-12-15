@@ -214,12 +214,16 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 			mParticles.push_back(NewPos);
 
 			//In-out connection
-			double stiffness = it == SkirtRootParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft / 5;
+			double stiffness = it == SkirtRootParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft / 2;
 
+			if(ParticleOffset < 180)
+			{
 			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
 																ParticleOffset + i,
 																it -> ID,
 																SkirtRadius));
+			}
+
 			//Rim
 			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
 																ParticleOffset + i,
