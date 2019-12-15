@@ -71,9 +71,9 @@ private:
 	const double										mBendingStiffness_hard = 100000.0f;
 
 	//Size parameters
-	const double										TorsoRadius = 0.13f;
-	const double										ShoulderRadius = 0.03f;
-	const double										ArmRadius = 0.02f;
+	const double										TorsoRadius = 0.14f;
+	const double										ShoulderRadius = 0.05f;
+	const double										ArmRadius = 0.05f;
 	const double										SkirtStepping = 0.015f;
 
 	//Number of fragments

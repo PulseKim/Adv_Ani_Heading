@@ -523,7 +523,7 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 																(mParticles[802+i] - mParticles[LeftArmStitchRHS[i]]).norm() * 0.7));
 	}
 
-
+	//Right arm vertices: 901-1060
 	for(auto it = RightArmParams.begin() ; it != RightArmParams.end() ; it++)
 	{
 		Eigen::Vector3d ref_pos = it -> Position;
@@ -680,15 +680,6 @@ const std::vector<Eigen::Vector3d> Cloth::getVertices()
 	const Eigen::VectorXd &particles = this->mSoftWorld->GetPositions();
 
 	std::vector<Eigen::Vector3d> ret;
-/*
-	for(size_t i = 81 ; i < particles.size() ; i++)
-	{
-			ret.emplace_back(	particles[i * 3 + 0],
-								particles[i * 3 + 1],
-								particles[i * 3 + 2]);	//81
-	}
-	return ret;
-	*/
 
 	//Lower skirt: 81-384
 	size_t ParticleOffset = 81;
@@ -736,6 +727,27 @@ const std::vector<Eigen::Vector3d> Cloth::getVertices()
 		
 	}
 
+	//Skirt-torso interconnect
+	for(size_t i = 0 ; i < n_circ_fragments ; i++)
+	{
+		ret.emplace_back(	particles[(401 + i) * 3 + 0],
+							particles[(401 + i) * 3 + 1],
+							particles[(401 + i) * 3 + 2]);
+
+		ret.emplace_back(	particles[(81 + i) * 3 + 0],
+							particles[(81 + i) * 3 + 1],
+							particles[(81 + i) * 3 + 2]);
+
+		ret.emplace_back(	particles[(81 +  ((i + 1) % n_circ_fragments)) * 3 + 0],
+							particles[(81 +  ((i + 1) % n_circ_fragments)) * 3 + 1],
+							particles[(81 +  ((i + 1) % n_circ_fragments)) * 3 + 2]);
+
+		ret.emplace_back(	particles[(401 + ((i + 1) % n_circ_fragments)) * 3 + 0],
+							particles[(401 + ((i + 1) % n_circ_fragments)) * 3 + 1],
+							particles[(401 + ((i + 1) % n_circ_fragments)) * 3 + 2]);
+
+
+	}
 
 	//Torso: 401-720
 	ParticleOffset = 401;
@@ -782,6 +794,116 @@ const std::vector<Eigen::Vector3d> Cloth::getVertices()
 		ParticleOffset++;
 		
 	}
+
+	//Left shoulder: 721-810
+	ParticleOffset = 721;
+	size_t Stride = (n_circ_fragments / 2) + 1;
+
+	for(size_t i = 0 ; i < n_short_fragments - 1 ; i++)
+	{
+		for(size_t j = 0 ; j < Stride - 1 ; j++)
+		{
+				ret.emplace_back(	particles[(ParticleOffset + j) * 3 + 0],
+									particles[(ParticleOffset + j) * 3 + 1],
+									particles[(ParticleOffset + j) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + (j + 1)) * 3 + 0],
+									particles[(ParticleOffset + (j + 1)) * 3 + 1],
+									particles[(ParticleOffset + (j + 1)) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + Stride + (j + 1)) * 3 + 0],
+									particles[(ParticleOffset + Stride + (j + 1)) * 3 + 1],
+									particles[(ParticleOffset + Stride + (j + 1)) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + Stride + j) * 3 + 0],
+									particles[(ParticleOffset + Stride + j) * 3 + 1],
+									particles[(ParticleOffset + Stride + j) * 3 + 2]);
+
+		}
+		ParticleOffset += Stride;
+	}
+
+	//Right shoulder: 811-900
+	ParticleOffset = 811;
+
+	for(size_t i = 0 ; i < n_short_fragments - 1 ; i++)
+	{
+		for(size_t j = 0 ; j < Stride - 1 ; j++)
+		{
+				ret.emplace_back(	particles[(ParticleOffset + j) * 3 + 0],
+									particles[(ParticleOffset + j) * 3 + 1],
+									particles[(ParticleOffset + j) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + (j + 1)) * 3 + 0],
+									particles[(ParticleOffset + (j + 1)) * 3 + 1],
+									particles[(ParticleOffset + (j + 1)) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + Stride + (j + 1)) * 3 + 0],
+									particles[(ParticleOffset + Stride + (j + 1)) * 3 + 1],
+									particles[(ParticleOffset + Stride + (j + 1)) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + Stride + j) * 3 + 0],
+									particles[(ParticleOffset + Stride + j) * 3 + 1],
+									particles[(ParticleOffset + Stride + j) * 3 + 2]);
+
+		}
+		ParticleOffset += Stride;
+	}
+
+
+	//Left arm: 901-1060
+	ParticleOffset = 901;
+	for(size_t i = 0 ; i < n_short_fragments - 1 ; i++)
+	{
+			for(size_t j = 0 ; j < n_circ_fragments ; j++)
+			{
+				ret.emplace_back(	particles[(ParticleOffset + j) * 3 + 0],
+									particles[(ParticleOffset + j) * 3 + 1],
+									particles[(ParticleOffset + j) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + ((j + 1) % n_circ_fragments)) * 3 + 0],
+									particles[(ParticleOffset + ((j + 1) % n_circ_fragments)) * 3 + 1],
+									particles[(ParticleOffset + ((j + 1) % n_circ_fragments)) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments + ((j + 1) % n_circ_fragments)) * 3 + 0],
+									particles[(ParticleOffset + n_circ_fragments + ((j + 1) % n_circ_fragments)) * 3 + 1],
+									particles[(ParticleOffset + n_circ_fragments + ((j + 1) % n_circ_fragments)) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments + j) * 3 + 0],
+									particles[(ParticleOffset + n_circ_fragments + j) * 3 + 1],
+									particles[(ParticleOffset + n_circ_fragments + j) * 3 + 2]);
+
+			}
+			ParticleOffset += n_circ_fragments;
+	}
+
+	//Right arm: 1061-1220
+	ParticleOffset = 1061;
+	for(size_t i = 0 ; i < n_short_fragments - 1 ; i++)
+	{
+			for(size_t j = 0 ; j < n_circ_fragments ; j++)
+			{
+				ret.emplace_back(	particles[(ParticleOffset + j) * 3 + 0],
+									particles[(ParticleOffset + j) * 3 + 1],
+									particles[(ParticleOffset + j) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + ((j + 1) % n_circ_fragments)) * 3 + 0],
+									particles[(ParticleOffset + ((j + 1) % n_circ_fragments)) * 3 + 1],
+									particles[(ParticleOffset + ((j + 1) % n_circ_fragments)) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments + ((j + 1) % n_circ_fragments)) * 3 + 0],
+									particles[(ParticleOffset + n_circ_fragments + ((j + 1) % n_circ_fragments)) * 3 + 1],
+									particles[(ParticleOffset + n_circ_fragments + ((j + 1) % n_circ_fragments)) * 3 + 2]);
+
+				ret.emplace_back(	particles[(ParticleOffset + n_circ_fragments + j) * 3 + 0],
+									particles[(ParticleOffset + n_circ_fragments + j) * 3 + 1],
+									particles[(ParticleOffset + n_circ_fragments + j) * 3 + 2]);
+
+			}
+			ParticleOffset += n_circ_fragments;
+	}
+
+
 
 	return ret;
 
