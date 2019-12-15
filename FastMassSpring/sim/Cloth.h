@@ -72,7 +72,7 @@ private:
 
 	//Size parameters
 	const double										TorsoRadius = 0.12f;
-	const double										ShoulderRadius = 0.04f;
+	const double										ShoulderRadius = 0.02f;
 	const double										ArmRadius = 0.05f;
 	const double										SkirtStepping = 0.02f;
 

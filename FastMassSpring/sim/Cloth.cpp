@@ -664,7 +664,6 @@ Cloth::~Cloth()
 
 void Cloth::TimeStep()
 {
-	std::cout << "Step\n";
 	mSoftWorld->TimeStepping();
 }
 
@@ -672,15 +671,6 @@ FEM::World *Cloth::GetSoftWorld()
 {
 	return this -> mSoftWorld;
 }
-/*
-const std::vector<Eigen::Vector3d> Cloth::getVertices()
-{
-	const Eigen::VectorXd &particles = this->mSoftWorld->GetPositions();
-	std::vector<Eigen::Vector3d> ret;
-
-	//Lower skirt: 81-384
-}
-*/
 
 const std::vector<Eigen::Vector3d> Cloth::getVertices()
 {
@@ -910,6 +900,7 @@ const std::vector<Eigen::Vector3d> Cloth::getVertices()
 			ParticleOffset += n_circ_fragments;
 	}
 
+/*
 	//Left Shoulder-Arm stitching
 	size_t LeftArmStitchRHS[9] = {905, 904, 903, 902, 901, 916, 915, 914, 913};
 	for(size_t i = 0 ; i < 8 ; i++)
@@ -931,22 +922,46 @@ const std::vector<Eigen::Vector3d> Cloth::getVertices()
 							particles[(LeftArmStitchRHS[i]) * 3 + 1],
 							particles[(LeftArmStitchRHS[i]) * 3 + 2]);
 	}
+*/
+	//Left Shoulder-Arm stitching
+	size_t LeftArmStitchRHS[16] = {905, 904, 903, 902, 901, 916, 915, 914, 913, 912, 911, 910, 909, 908, 907, 906};
+	for(size_t i = 0 ; i < 16 ; i++)
+	{
+		
+		ret.emplace_back(	particles[(802 + i) * 3 + 0],
+							particles[(802 + i) * 3 + 1],
+							particles[(802 + i) * 3 + 2]);
+
+		ret.emplace_back(	particles[(802 + ((i + 1) % 16)) * 3 + 0],
+							particles[(802 + ((i + 1) % 16)) * 3 + 1],
+							particles[(802 + ((i + 1) % 16)) * 3 + 2]);
+
+		ret.emplace_back(	particles[(LeftArmStitchRHS[(i + 1) % 16]) * 3 + 0],
+							particles[(LeftArmStitchRHS[(i + 1) % 16]) * 3 + 1],
+							particles[(LeftArmStitchRHS[(i + 1) % 16]) * 3 + 2]);
+
+		ret.emplace_back(	particles[(LeftArmStitchRHS[i]) * 3 + 0],
+							particles[(LeftArmStitchRHS[i]) * 3 + 1],
+							particles[(LeftArmStitchRHS[i]) * 3 + 2]);
+	}
+
+
 
 	//Right Shoulder-Arm stitching
-	for(size_t i = 0 ; i < 8 ; i++)
+	for(size_t i = 0 ; i < 16 ; i++)
 	{
 		
 		ret.emplace_back(	particles[(892 + i) * 3 + 0],
 							particles[(892 + i) * 3 + 1],
 							particles[(892 + i) * 3 + 2]);
 
-		ret.emplace_back(	particles[(893 + i) * 3 + 0],
-							particles[(893 + i) * 3 + 1],
-							particles[(893 + i) * 3 + 2]);
+		ret.emplace_back(	particles[(892 + ((i + 1) % 16)) * 3 + 0],
+							particles[(892 + ((i + 1) % 16)) * 3 + 1],
+							particles[(892 + ((i + 1) % 16)) * 3 + 2]);
 
-		ret.emplace_back(	particles[(1066 + i) * 3 + 0],
-							particles[(1066 + i) * 3 + 1],
-							particles[(1066 + i) * 3 + 2]);
+		ret.emplace_back(	particles[(1065 + ((i + 1) % 16)) * 3 + 0],
+							particles[(1065 + ((i + 1) % 16)) * 3 + 1],
+							particles[(1065 + ((i + 1) % 16)) * 3 + 2]);
 
 		ret.emplace_back(	particles[(1065 + i) * 3 + 0],
 							particles[(1065 + i) * 3 + 1],
