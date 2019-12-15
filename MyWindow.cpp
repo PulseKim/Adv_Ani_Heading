@@ -14,7 +14,6 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 	mCartoonFlag = false;
 	this->water_flag = false;
 
-
 	Eigen::Vector3d skirtRoot_dir = (getJointTransform("tibial") + getJointTransform("tibiar"))/2 - getJointTransform("torso");
 	Eigen::Vector3d skirtRoot = skirtRoot_dir/skirtRoot_dir.norm()*0.5 + getJointTransform("torso");
 
@@ -25,8 +24,6 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 	std::cout << getJointTransform("upperarmr").transpose() << std::endl;
 	std::cout << getJointTransform("forearmr").transpose() << std::endl;
 	std::cout << skirtRoot.transpose() << std::endl;
-
-
 
 	mCloth = std::make_unique<Cloth>(getJointTransform("torso"),
 						getJointTransform("head"),
@@ -125,6 +122,9 @@ std::string MyWindow::GetCurrentWorkingDir()
   std::string current_working_dir(buff);
   return current_working_dir;
 }
+
+// visual espect
+// skelgen
 
 void MyWindow::throw_normal_ball()
 {
@@ -286,11 +286,74 @@ void MyWindow::timeStepping()
 	mCloth->TimeStep();
 */
 
-
 	// Override timestepping from default dartsim world
 	SimWindow::timeStepping();
-
 }
+
+
+// void MyWindow::drawSkeleton(const dynamics::Skeleton* skeleton,
+//                              const Eigen::Vector4d& color,
+//                              bool useDefaultColor) const
+// {
+//   if (!skeleton)
+//     return;
+
+//   for (auto i = 0u; i < skeleton->getNumTrees(); ++i)
+//     drawBodyNode(skeleton->getRootBodyNode(i), color, useDefaultColor, true);
+
+// 	std::cout << "here??" << std::endl;
+// }
+
+// void MyWindow::drawmBodyNode(const BodyNode* bodyNode,
+//                              const Eigen::Vector4d& color,
+//                              bool useDefaultColor,
+//                              bool recursive) const
+// {
+//   if (!bodyNode)
+//     return;
+
+//   if (!mRI)
+//     return;
+
+//   mRI->pushMatrix();
+
+//   // Use the relative transform of this Frame. We assume that we are being
+//   // called from the parent Frame's renderer.
+//   // TODO(MXG): This can cause trouble if the draw function is originally called
+//   // on an Entity or Frame which is not a child of the World Frame
+//   mRI->transform(bodyNode->getRelativeTransform());
+
+//   // _ri->pushName(???); TODO(MXG): What should we do about this for Frames?
+//   auto shapeNodes = bodyNode->getShapeNodesWith<VisualAspect>();
+//   for (const auto& shapeNode : shapeNodes)
+//     drawShapeFrame(shapeNode, color, useDefaultColor);
+//   // _ri.popName();
+
+//   if (mShowPointMasses)
+//   {
+//     const auto& softBodyNode
+//         = dynamic_cast<const SoftBodyNode*>(bodyNode);
+//     if (softBodyNode)
+//       drawPointMasses(softBodyNode->getPointMasses(), color);
+//   }
+
+//   if (mShowMarkers)
+//   {
+//     for (auto i = 0u; i < bodyNode->getNumMarkers(); ++i)
+//       drawMarker(bodyNode->getMarker(i));
+//   }
+
+//   // render the subtree
+// //   if (recursive)
+// //   {
+// //     for (const auto& entity : bodyNode->getChildEntities())
+// //       drawEntity(entity, color, useDefaultColor);
+// //   }
+
+//   mRI->popMatrix();
+// }
+
+
 
 // Drawing Function. Every SImWindow TimeStepping function calls this draw function
 void MyWindow::draw()
@@ -361,14 +424,14 @@ void MyWindow::draw()
 
 	//drawSphere(0.1, 10 , 10, skirtRoot);
 	
-	std::cout << "==================" << std::endl;
-	std::cout << getJointTransform("torso").transpose() << std::endl;
-	std::cout << getJointTransform("head").transpose() << std::endl;
-	std::cout << getJointTransform("upperarml").transpose() << std::endl;
-	std::cout << getJointTransform("forearml").transpose() << std::endl;
-	std::cout << getJointTransform("upperarmr").transpose() << std::endl;
-	std::cout << getJointTransform("forearmr").transpose() << std::endl;
-	std::cout << skirtRoot.transpose() << std::endl;
+	// std::cout << "==================" << std::endl;
+	// std::cout << getJointTransform("torso").transpose() << std::endl;
+	// std::cout << getJointTransform("head").transpose() << std::endl;
+	// std::cout << getJointTransform("upperarml").transpose() << std::endl;
+	// std::cout << getJointTransform("forearml").transpose() << std::endl;
+	// std::cout << getJointTransform("upperarmr").transpose() << std::endl;
+	// std::cout << getJointTransform("forearmr").transpose() << std::endl;
+	// std::cout << skirtRoot.transpose() << std::endl;
 
 	mCloth->SetPosition(	getJointTransform("torso"),
 						getJointTransform("head"),
@@ -382,9 +445,22 @@ void MyWindow::draw()
 
 	draw_cloth(mCloth->getVertices());
 
+	Eigen::Vector4d remove_color(0,0,0,0);
 
-	// Draw rest world components
-	drawWorld();
+	for(size_t i=1; i< mHubo->getNumBodyNodes(); i++){
+		if (i==1 || i==2 || i==9 || i==11 || i==12 || i==13 || i==14) continue;
+		mRI->pushMatrix();
+		BodyNode* mBN = mHubo->getBodyNode(i);
+		mRI->transform(mBN->getTransform());
+		drawShapeFrame(mBN->getShapeNodesWith<VisualAspect>()[0], remove_color, true);
+		mRI->popMatrix();
+	}
+    
+	drawSkeleton(mWorld->getSkeleton(1).get()); // mFloor
+	drawSkeleton(mWorld->getSkeleton(2).get()); // mBall
+
+	for (auto i = 0u; i < mWorld->getNumSimpleFrames(); ++i)
+    	drawShapeFrame(mWorld->getSimpleFrame(i).get());
 
 	// display the frame count in 2D text
 	char buff[64];
