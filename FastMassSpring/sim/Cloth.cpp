@@ -214,7 +214,7 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 			mParticles.push_back(NewPos);
 
 			//In-out connection
-			double stiffness = it == SkirtRootParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft;
+			double stiffness = it == SkirtRootParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft / 5;
 
 			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
 																ParticleOffset + i,
@@ -627,6 +627,8 @@ void Cloth::SetPosition(	const Eigen::Vector3d &Pelvis,
 							const Eigen::Vector3d &RAnkle,
 							const Eigen::Vector3d &SkirtRoot)
 {
+	std::cout << "SetPos\n";
+	std::cout << Pelvis[0] << ", " << Pelvis[1] << ", " << Pelvis[2] << std::endl;
 	for(auto it = FixedParams.begin() ; it != FixedParams.end() ; it++)
 	{
 		mSoftWorld->RemoveConstraint(it -> PosConstraint);

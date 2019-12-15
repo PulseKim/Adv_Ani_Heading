@@ -61,7 +61,7 @@ private:
 	std::vector<ConstraintParam>						FixedParams;
 	
 	//Simulation timestep
-	const double										TimeStepSize = 0.001f;
+	const double										TimeStepSize = 0.4f;
 
 	//Spring stiffness parameters
 	const double										mStretchingStiffness_soft = 100.0f;

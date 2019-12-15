@@ -271,7 +271,7 @@ void MyWindow::timeStepping()
 		mController->addSPDForces();
 	}
 
-
+/*
 	Eigen::Vector3d skirtRoot_dir = (getJointTransform("tibial") + getJointTransform("tibiar"))/2 - getJointTransform("torso");
 	Eigen::Vector3d skirtRoot = skirtRoot_dir/skirtRoot_dir.norm()*0.5 + getJointTransform("torso");
 
@@ -284,6 +284,7 @@ void MyWindow::timeStepping()
 						skirtRoot);
 
 	mCloth->TimeStep();
+*/
 
 
 	// Override timestepping from default dartsim world
@@ -348,17 +349,17 @@ void MyWindow::draw()
 
 	glEnable(GL_LIGHTING);
 	// Implement 3D factors inside here
-	drawSphere(0.1, 10 , 10, getJointTransform("torso"));
-	drawSphere(0.1, 10 , 10, getJointTransform("head"));
-	drawSphere(0.1, 10 , 10, getJointTransform("upperarml"));
-	drawSphere(0.1, 10 , 10, getJointTransform("forearml"));
-	drawSphere(0.1, 10 , 10, getJointTransform("upperarmr"));
-	drawSphere(0.1, 10 , 10, getJointTransform("forearmr"));
+	//drawSphere(0.1, 10 , 10, getJointTransform("torso"));
+	//drawSphere(0.1, 10 , 10, getJointTransform("head"));
+	//drawSphere(0.1, 10 , 10, getJointTransform("upperarml"));
+	//drawSphere(0.1, 10 , 10, getJointTransform("forearml"));
+	//drawSphere(0.1, 10 , 10, getJointTransform("upperarmr"));
+	//drawSphere(0.1, 10 , 10, getJointTransform("forearmr"));
 
 	Eigen::Vector3d skirtRoot_dir = (getJointTransform("tibial") + getJointTransform("tibiar"))/2 - getJointTransform("torso");
 	Eigen::Vector3d skirtRoot = skirtRoot_dir/skirtRoot_dir.norm()*0.5 + getJointTransform("torso");
 
-	drawSphere(0.1, 10 , 10, skirtRoot);
+	//drawSphere(0.1, 10 , 10, skirtRoot);
 	
 	std::cout << "==================" << std::endl;
 	std::cout << getJointTransform("torso").transpose() << std::endl;
@@ -369,15 +370,15 @@ void MyWindow::draw()
 	std::cout << getJointTransform("forearmr").transpose() << std::endl;
 	std::cout << skirtRoot.transpose() << std::endl;
 
-	// mCloth->SetPosition(	getJointTransform("torso"),
-	// 					getJointTransform("head"),
-	// 					getJointTransform("upperarml"),
-	// 					getJointTransform("forearml"),
-	// 					getJointTransform("upperarmr"),
-	// 					getJointTransform("forearmr"),
-	// 					skirtRoot);
+	mCloth->SetPosition(	getJointTransform("torso"),
+						getJointTransform("head"),
+						getJointTransform("upperarml"),
+						getJointTransform("forearml"),
+						getJointTransform("upperarmr"),
+						getJointTransform("forearmr"),
+						skirtRoot);
 
-	// mCloth->TimeStep();
+	mCloth->TimeStep();
 
 	draw_cloth(mCloth->getVertices());
 
