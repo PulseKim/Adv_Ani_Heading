@@ -201,7 +201,7 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 	//Particle 81-400
 
 	size_t ParticleOffset = 81;
-	float SkirtRadius = 2.1f;
+	float SkirtRadius = TorsoRadius + SkirtStepping;
 	for(auto it = SkirtRootParams.begin() ; it != SkirtRootParams.end() ; it++)
 	{
 
@@ -230,7 +230,7 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 		if(it == SkirtRootParams.begin())
 		{
 			ParticleOffset += n_circ_fragments;
-			SkirtRadius += 0.1f;
+			SkirtRadius += SkirtStepping;
 			continue;
 		}
 
@@ -263,13 +263,11 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 		}
 
 		ParticleOffset += n_circ_fragments;
-		SkirtRadius += 0.1f;
+		SkirtRadius += SkirtStepping;
 	}
 
 
 	//Torso vertices(401 - 640, 641 - 720)
-
-	SkirtRadius = 2.0f;
 	size_t n_rings = 0;
 	for(auto it = BodyParams.begin() ; it + 1 != BodyParams.end() ; it++)
 	{
@@ -278,8 +276,8 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 		for(size_t i = 0 ; i < n_circ_fragments ; i++)
 		{
 			Eigen::Vector3d NewPos =	it -> Position
-										+ Eigen::Vector3d(SkirtRadius * cos((2 * 3.141591f * i) / n_circ_fragments),
-														0, SkirtRadius * sin((2 * 3.141591f * i) / n_circ_fragments));
+										+ Eigen::Vector3d(TorsoRadius * cos((2 * 3.141591f * i) / n_circ_fragments),
+														0, TorsoRadius * sin((2 * 3.141591f * i) / n_circ_fragments));
 			mParticles.push_back(NewPos);
 
 			double stiffness = it == BodyParams.begin() ? mStretchingStiffness_hard : mStretchingStiffness_soft;
@@ -290,14 +288,14 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 					mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
 																		ParticleOffset + i,
 																		it -> ID,
-																		SkirtRadius));
+																		TorsoRadius));
 			}
 
 			//Rim
 			mConstraints.push_back(new FEM::SpringConstraint(	stiffness,
 																ParticleOffset + i,
 																ParticleOffset + ((i + 1) % n_circ_fragments),
-																(SkirtRadius * 2 * 3.141591f) / n_circ_fragments));
+																(TorsoRadius * 2 * 3.141591f) / n_circ_fragments));
 		}
 
 		if(it == SkirtRootParams.begin())
@@ -339,8 +337,6 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 	std::cout << ParticleOffset << std::endl;
 
 	//Left shoulder vertices: 721-810
-	double ShoulderRadius = 0.5f;
-
 	for(auto it = LeftShoulderParams.begin() ; it != LeftShoulderParams.end() ; it++)
 	{
 		Eigen::Vector3d ref_pos = it -> Position;
@@ -457,8 +453,6 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 	}
 
 	//Left arm vertices: 901-1060
-	double ArmRadius = 0.6f;
-
 	for(auto it = LeftArmParams.begin() ; it != LeftArmParams.end() ; it++)
 	{
 		Eigen::Vector3d ref_pos = it -> Position;
@@ -654,6 +648,11 @@ void Cloth::SetPosition(	const Eigen::Vector3d &Pelvis,
 	}
 }
 
+Cloth::~Cloth()
+{
+
+}
+
 void Cloth::TimeStep()
 {
 	mSoftWorld->TimeStepping();
@@ -663,6 +662,15 @@ FEM::World *Cloth::GetSoftWorld()
 {
 	return this -> mSoftWorld;
 }
+/*
+const std::vector<Eigen::Vector3d> Cloth::getVertices()
+{
+	const Eigen::VectorXd &particles = this->mSoftWorld->GetPositions();
+	std::vector<Eigen::Vector3d> ret;
+
+	//Lower skirt: 81-384
+}
+*/
 
 const std::vector<Eigen::Vector3d> Cloth::getVertices()
 {

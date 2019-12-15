@@ -23,7 +23,7 @@ SimulationWindow()
 	mCurFrame = 0;
 	mDisplayTimeout = 33;
 	mElapsedTime = 0.0;
-
+/*
 	mSoftWorld = new FEM::World(
 		FEM::IntegrationMethod::PROJECTIVE_DYNAMICS,	//Integration Method
 		FEM::OptimizationMethod::OPTIMIZATION_METHOD_NEWTON,
@@ -32,29 +32,19 @@ SimulationWindow()
 		100, 											//max_iteration	
 		0.99											//damping_coeff
 		);
-	//mCloth = new Cloth();
-	//mCloth->Initialize(mSoftWorld);
-
-	//Do things
-	/*
-	mBody = new BodyModel(10.0f, 20, 1.5f, 2.0f, 16);
-	mBody->Initialize(mSoftWorld);
-	mSoftWorld->Initialize();
 	*/
 
-	mCloth = new Cloth(	Eigen::Vector3d(0, 0, 0),
-						Eigen::Vector3d(0, 8, 0),
-						Eigen::Vector3d(3, 8, 0),
-						Eigen::Vector3d(3, 4, 0),
-						Eigen::Vector3d(-3, 8, 0),
-						Eigen::Vector3d(-3, 4, 0),
-						Eigen::Vector3d(0, -4, 0));
+	//Do things
+	mCloth = new Cloth(	Eigen::Vector3d(0,	 	0.75f,	0),
+						Eigen::Vector3d(0,	 	1.3f,	-0.05f),
+						Eigen::Vector3d(0.17f,  1.3f,	-0.05f),
+						Eigen::Vector3d(0.17f,  1.0f,	-0.05f),
+						Eigen::Vector3d(-0.17f, 1.3f,	-0.05f),
+						Eigen::Vector3d(-0.17f, 1.0f,	-0.05f),
+						Eigen::Vector3d(0, 		0.25f,	0));
 
 	mCloth -> getVertices();
-
 	mSoftWorld = mCloth->GetSoftWorld();
-
-
 
 }
 void
