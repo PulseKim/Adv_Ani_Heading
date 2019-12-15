@@ -515,12 +515,14 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 	//size_t LeftArmStitchLHS[9] = {802, 803, 804, ... 810}
 	size_t LeftArmStitchRHS[9] = {905, 904, 903, 902, 901, 916, 915, 914, 913};
 
+
+
 	for(size_t i = 0 ; i < 9 ; i++)
 	{
 			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft * 4,
 																802 + i,
 																LeftArmStitchRHS[i],
-																(mParticles[802+i] - mParticles[LeftArmStitchRHS[i]]).norm() * 0.7));
+																(mParticles[802+i] - mParticles[LeftArmStitchRHS[i]]).norm() * 1.2));
 	}
 
 	//Right arm vertices: 901-1060
@@ -582,12 +584,13 @@ Cloth::Cloth(	const Eigen::Vector3d &Pelvis,
 		ParticleOffset += n_circ_fragments;
 	}
 
+	//Right ARM stitching-
 	for(size_t i = 0 ; i < 9 ; i++)
 	{
 			mConstraints.push_back(new FEM::SpringConstraint(	mStretchingStiffness_soft * 4,
 																892 + i,
 																1065 + i,
-																(mParticles[892+i] - mParticles[1065+i]).norm() * 0.7));
+																(mParticles[892+i] - mParticles[1065+i]).norm() * 1.2));
 	}
 
 
@@ -903,8 +906,73 @@ const std::vector<Eigen::Vector3d> Cloth::getVertices()
 			ParticleOffset += n_circ_fragments;
 	}
 
+	//Left Shoulder-Arm stitching
+	size_t LeftArmStitchRHS[9] = {905, 904, 903, 902, 901, 916, 915, 914, 913};
+	for(size_t i = 0 ; i < 8 ; i++)
+	{
+		
+		ret.emplace_back(	particles[(802 + i) * 3 + 0],
+							particles[(802 + i) * 3 + 1],
+							particles[(802 + i) * 3 + 2]);
 
+		ret.emplace_back(	particles[(803 + i) * 3 + 0],
+							particles[(803 + i) * 3 + 1],
+							particles[(803 + i) * 3 + 2]);
+
+		ret.emplace_back(	particles[(LeftArmStitchRHS[i + 1]) * 3 + 0],
+							particles[(LeftArmStitchRHS[i + 1]) * 3 + 1],
+							particles[(LeftArmStitchRHS[i + 1]) * 3 + 2]);
+
+		ret.emplace_back(	particles[(LeftArmStitchRHS[i]) * 3 + 0],
+							particles[(LeftArmStitchRHS[i]) * 3 + 1],
+							particles[(LeftArmStitchRHS[i]) * 3 + 2]);
+	}
+
+	//Right Shoulder-Arm stitching
+	for(size_t i = 0 ; i < 8 ; i++)
+	{
+		
+		ret.emplace_back(	particles[(892 + i) * 3 + 0],
+							particles[(892 + i) * 3 + 1],
+							particles[(892 + i) * 3 + 2]);
+
+		ret.emplace_back(	particles[(893 + i) * 3 + 0],
+							particles[(893 + i) * 3 + 1],
+							particles[(893 + i) * 3 + 2]);
+
+		ret.emplace_back(	particles[(1066 + i) * 3 + 0],
+							particles[(1066 + i) * 3 + 1],
+							particles[(1066 + i) * 3 + 2]);
+
+		ret.emplace_back(	particles[(1065 + i) * 3 + 0],
+							particles[(1065 + i) * 3 + 1],
+							particles[(1065 + i) * 3 + 2]);
+	}
+
+	size_t TorsoStitchLHS[12] = {706, 707, 708, 710, 711, 712, 714, 715, 716, 718, 719, 720};
+	size_t TorsoStitchRHS[12] = {793, 757, 721, 811, 847, 883, 891, 855, 819, 709, 729, 801};
+	for(size_t i = 0 ; i < 12 ; i++)
+	{
+		
+		ret.emplace_back(	particles[(TorsoStitchLHS[i]) * 3 + 0],
+							particles[(TorsoStitchLHS[i]) * 3 + 1],
+							particles[(TorsoStitchLHS[i]) * 3 + 2]);
+
+		ret.emplace_back(	particles[(TorsoStitchLHS[(i + 1) % 12]) * 3 + 0],
+							particles[(TorsoStitchLHS[(i + 1) % 12]) * 3 + 1],
+							particles[(TorsoStitchLHS[(i + 1) % 12]) * 3 + 2]);
+
+		ret.emplace_back(	particles[(TorsoStitchRHS[(i + 1) % 12]) * 3 + 0],
+							particles[(TorsoStitchRHS[(i + 1) % 12]) * 3 + 1],
+							particles[(TorsoStitchRHS[(i + 1) % 12]) * 3 + 2]);
+
+		ret.emplace_back(	particles[(TorsoStitchRHS[i]) * 3 + 0],
+							particles[(TorsoStitchRHS[i]) * 3 + 1],
+							particles[(TorsoStitchRHS[i]) * 3 + 2]);
+	}
 
 	return ret;
+
+
 
 }
