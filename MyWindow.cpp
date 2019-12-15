@@ -13,6 +13,32 @@ MyWindow::MyWindow(const WorldPtr& world) : SimWindow()
 	mBallGenerator = std::make_unique<Throw>(mHubo, mWorld->getTimeStep());
 	mCartoonFlag = false;
 	this->water_flag = false;
+
+
+	Eigen::Vector3d skirtRoot_dir = (getJointTransform("tibial") + getJointTransform("tibiar"))/2 - getJointTransform("torso");
+	Eigen::Vector3d skirtRoot = skirtRoot_dir/skirtRoot_dir.norm()*0.5 + getJointTransform("torso");
+
+	std::cout << getJointTransform("torso").transpose() << std::endl;
+	std::cout << getJointTransform("head").transpose() << std::endl;
+	std::cout << getJointTransform("upperarml").transpose() << std::endl;
+	std::cout << getJointTransform("forearml").transpose() << std::endl;
+	std::cout << getJointTransform("upperarmr").transpose() << std::endl;
+	std::cout << getJointTransform("forearmr").transpose() << std::endl;
+	std::cout << skirtRoot.transpose() << std::endl;
+
+
+
+	mCloth = std::make_unique<Cloth>(getJointTransform("torso"),
+						getJointTransform("head"),
+						getJointTransform("upperarml"),
+						getJointTransform("forearml"),
+						getJointTransform("upperarmr"),
+						getJointTransform("forearmr"),
+						skirtRoot
+	);
+
+	std::cout << "pass" << std::endl;
+
 }
 
 
@@ -307,6 +333,39 @@ void MyWindow::draw()
 
 	glEnable(GL_LIGHTING);
 	// Implement 3D factors inside here
+	// drawSphere(0.1, 10 , 10, getJointTransform("torso"));
+	// drawSphere(0.1, 10 , 10, getJointTransform("head"));
+	// drawSphere(0.1, 10 , 10, getJointTransform("upperarml"));
+	// drawSphere(0.1, 10 , 10, getJointTransform("forearml"));
+	// drawSphere(0.1, 10 , 10, getJointTransform("upperarmr"));
+	// drawSphere(0.1, 10 , 10, getJointTransform("forearmr"));
+
+	Eigen::Vector3d skirtRoot_dir = (getJointTransform("tibial") + getJointTransform("tibiar"))/2 - getJointTransform("torso");
+	Eigen::Vector3d skirtRoot = skirtRoot_dir/skirtRoot_dir.norm()*0.5 + getJointTransform("torso");
+
+	// drawSphere(0.1, 10 , 10, skirtRoot);
+	
+	std::cout << "==================" << std::endl;
+	std::cout << getJointTransform("torso").transpose() << std::endl;
+	std::cout << getJointTransform("head").transpose() << std::endl;
+	std::cout << getJointTransform("upperarml").transpose() << std::endl;
+	std::cout << getJointTransform("forearml").transpose() << std::endl;
+	std::cout << getJointTransform("upperarmr").transpose() << std::endl;
+	std::cout << getJointTransform("forearmr").transpose() << std::endl;
+	std::cout << skirtRoot.transpose() << std::endl;
+
+	mCloth->SetPosition(	getJointTransform("torso"),
+						getJointTransform("head"),
+						getJointTransform("upperarml"),
+						getJointTransform("forearml"),
+						getJointTransform("upperarmr"),
+						getJointTransform("forearmr"),
+						skirtRoot);
+
+	mCloth->TimeStep();
+
+	draw_cloth(mCloth->getVertices());
+
 
 	// Draw rest world components
 	drawWorld();

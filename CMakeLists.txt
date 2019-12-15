@@ -12,6 +12,8 @@ find_package(DART REQUIRED COMPONENTS gui optimizer-ipopt collision-bullet colli
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 
+add_subdirectory(FastMassSpring)
+
 add_compile_options(-DHAVE_CSTDDEF)
 include_directories(${DART_INCLUDE_DIRS})
 include_directories(${OPENGL_INCLUDE_DIR})
@@ -20,5 +22,5 @@ include_directories(${GLUT_INCLUDE_DIR})
 file(GLOB srcs "*.h" "*.cpp")
 
 add_executable(run ${srcs})
-target_link_libraries(run ${DART_LIBRARIES} GL GLU glut)
+target_link_libraries(run ${DART_LIBRARIES} GL GLU glut sim)
 
